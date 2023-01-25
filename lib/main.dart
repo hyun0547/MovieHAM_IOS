@@ -55,6 +55,7 @@ class _AppState extends State<App> {
                     color: Colors.black,
                     child: Container(
                         decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
                           image: DecorationImage(
                             fit: BoxFit.fill,
                             image: NetworkImage(
