@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class MovieProvider{
-  static Uri uri = Uri.parse("http://localhost:8080/movieHam/api/movie/search/docid?keywords=F57692");
+  static Uri uri = Uri.parse("http://localhost:8080/movieHam/api/movie/search/docid?keywords=F57291");
 
   static Future<List<Movie>> getMovie() async {
     List<Movie> movies = [];

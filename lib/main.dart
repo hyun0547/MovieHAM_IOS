@@ -64,16 +64,21 @@ class _AppState extends State<App> {
                         ),
                         child: Container(
                           alignment: Alignment.bottomLeft,
-                          child: Text(
-                            snapshot.data![0].title,
-                            textAlign: TextAlign.left,
-                            style: const TextStyle(
-                              fontSize: 30,
-                              fontFamily: 'NanumSquareEB',
-                              color: Color.fromRGBO(255, 255, 255, 1),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                snapshot.data![0].title,
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(
+                                  fontSize: 30,
+                                  fontFamily: 'NanumSquareEB',
+                                  color: Color.fromRGBO(255, 255, 255, 1),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Image(image: AssetImage('images/rating/KMRB_' + (snapshot.data![0].rating ?? "").substring(0, 2) + '.png'))
+                            ],
+                          )
                         )));
               }
               return Text("no Data");
