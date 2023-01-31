@@ -19,15 +19,13 @@ void main() {
   );
 }
 
-
-
 class App extends StatefulWidget {
   @override
   State<App> createState() => _AppState();
 }
 
 class _AppState extends State<App> {
-  Future<List<Movie>> movies = MovieProvider.getMovie();
+  Future<Movie> movie = MovieProvider.getMovie(57759);
   bool isLoading = true;
   bool _plotVisible = false;
 
@@ -48,7 +46,7 @@ class _AppState extends State<App> {
           centerTitle: false,
         ),
         body: FutureBuilder(
-          future: movies,
+          future: movie,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data != null) {
@@ -57,71 +55,113 @@ class _AppState extends State<App> {
                     height: MediaQuery.of(context).size.height,
                     child: Column(
                       children: <Widget>[
-                        GestureDetector(
-
-                          onTapDown: (e) {
-                            setState(() {
-                              _plotVisible = !_plotVisible;
-                            });
-                          },
-                          onTapUp: (e) {
-                            setState(() {
-                              _plotVisible = !_plotVisible;
-                            });
-                          },
-                          child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height:
-                                  MediaQuery.of(context).size.height * 0.7392,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(
-                                      snapshot.data![0].posters.split("|")[0]),
+                        Stack(children: <Widget>[
+                          GestureDetector(
+                            onTapDown: (e) {
+                              setState(() {
+                                _plotVisible = !_plotVisible;
+                              });
+                            },
+                            onTapUp: (e) {
+                              setState(() {
+                                _plotVisible = !_plotVisible;
+                              });
+                            },
+                            child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.7392,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(snapshot
+                                        .data!.posters
+                                        .split("|")[0]),
+                                  ),
                                 ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Visibility(
-                                    visible: _plotVisible,
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      color: Color.fromRGBO(0, 0, 0, 0.5),
+                                child: Stack(
+                                  children: [
+                                    Visibility(
+                                      visible: _plotVisible,
                                       child: Container(
-                                        margin: EdgeInsets.all(20),
-                                        child: Text(
-                                          snapshot.data![0].plotKor,
-                                          style: const TextStyle(
-                                            letterSpacing: 1,
-                                            wordSpacing: 1,
-                                            fontSize: 20,
-                                            fontFamily: 'NanumSquareEB',
-                                            color: Color.fromRGBO(255, 255, 255, 1),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ) 
+                                          alignment: Alignment.center,
+                                          color: Color.fromRGBO(0, 0, 0, 0.5),
+                                          child: Container(
+                                            margin: EdgeInsets.all(20),
+                                            child: Text(
+                                              snapshot.data!.plotKor,
+                                              style: const TextStyle(
+                                                letterSpacing: 1,
+                                                wordSpacing: 1,
+                                                fontSize: 20,
+                                                fontFamily: 'NanumSquareEB',
+                                                color: Color.fromRGBO(
+                                                    255, 255, 255, 1),
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          )),
                                     ),
-                                  ),
-                                  Container(
-                                    alignment: Alignment.topRight,
-                                    margin: EdgeInsets.all(5),
-                                    child: Image(
-                                        width: 30,
-                                        image: AssetImage('images/rating/KMRB_${(snapshot.data![0].rating ?? "").substring(0, 2)}.png')),
-                                  ),
-                                ],
-                              )
+                                    Container(
+                                      alignment: Alignment.topRight,
+                                      margin: EdgeInsets.all(5),
+                                      child: snapshot.data!.rating.isEmpty ? null : Image(
+                                          width: 30,
+                                          image: AssetImage(
+                                               'images/rating/KMRB_${((snapshot.data!.rating).substring(0, 2) == '전체' ? "All" : (snapshot.data!.rating).substring(0, 2))}.png')
+                                      ),
+                                    ),
+                                  ],
+                                )),
                           ),
-                        ),
-
+                          Positioned(
+                              bottom: 10,
+                              right: 0,
+                              child:  Column(
+                                children: [
+                                  IconButton(
+                                      iconSize: 50,
+                                      color: Colors.white,
+                                      icon: const Icon(Icons.thumb_up),
+                                      tooltip: 'Increase volume by 10',
+                                      onPressed: () {
+                                        setState(() {movie = MovieProvider.getMovie(int.parse(snapshot.data!.movieSeq)-1);});
+                                      }),
+                                  IconButton(
+                                      iconSize: 50,
+                                      color: Colors.white,
+                                      icon: const Icon(Icons.thumb_down),
+                                      tooltip: 'Increase volume by 10',
+                                      onPressed: () {
+                                        setState(() {movie = MovieProvider.getMovie(int.parse(snapshot.data!.movieSeq)-1);});
+                                      }),
+                                  IconButton(
+                                      iconSize: 50,
+                                      color: Colors.white,
+                                      icon: const Icon(Icons.next_plan),
+                                      tooltip: 'Increase volume by 10',
+                                      onPressed: () {
+                                        setState(() {movie = MovieProvider.getMovie(int.parse(snapshot.data!.movieSeq)-1);});
+                                      }),
+                                  IconButton(
+                                      iconSize: 50,
+                                      color: Colors.white,
+                                      icon: const Icon(Icons.add_chart),
+                                      tooltip: 'Increase volume by 10',
+                                      onPressed: () {
+                                        setState(() {movie = MovieProvider.getMovie(int.parse(snapshot.data!.movieSeq)-1);});
+                                      }),
+                                ],
+                              ),
+                          )
+                        ]),
                         Container(
                             color: Colors.black,
                             alignment: Alignment.bottomLeft,
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  snapshot.data![0].title,
+                                  snapshot.data!.title,
                                   textAlign: TextAlign.left,
                                   style: const TextStyle(
                                     fontSize: 30,
@@ -132,7 +172,7 @@ class _AppState extends State<App> {
                                 ),
                                 SizedBox(width: 10),
                                 Text(
-                                  "[${snapshot.data![0].genre}]",
+                                  "[${snapshot.data!.genre}]",
                                   style: const TextStyle(
                                     fontSize: 17,
                                     fontFamily: 'NanumSquareEB',
@@ -153,28 +193,28 @@ class _AppState extends State<App> {
         ),
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.black,
-          onTap: (index) => {  Navigator.pushNamed(context, '/$index')},
+          onTap: (index) => {Navigator.pushNamed(context, '/$index')},
+          selectedItemColor: Color.fromRGBO(179, 18, 23, 1),
+          currentIndex: 0,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.text_snippet),
+              icon: Icon(Icons.today),
               label: '오늘의 추천',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: '홈',
+              icon: Icon(Icons.text_snippet),
+              label: '카테고리',
             ),
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.people,
-                color: Colors.white,
-              ),
+              icon: Icon(Icons.people,),
               label: '마이 페이지',
             ),
           ],
           unselectedItemColor: Colors.white,
-          selectedItemColor: Color.fromRGBO(179, 18, 23, 1),
         ),
       ),
     );
   }
+
+  void getNextMovie() {}
 }

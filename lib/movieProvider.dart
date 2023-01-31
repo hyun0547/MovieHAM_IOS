@@ -3,22 +3,26 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class MovieProvider{
-  static Uri uri = Uri.parse("http://localhost:8080/movieHam/api/movie/search/docid?keywords=F57291");
 
-  static Future<List<Movie>> getMovie() async {
-    List<Movie> movies = [];
-
-    final response = await http.get(uri);
+  static Future<Movie> getMovie(movieSeq) async {
+    var movie = null;
+    final response = await http.get(Uri.parse("http://localhost:8080/movieHam/api/movie/search/movieSeq?keywords=${movieSeq ?? 0}"));
 
     if (response.statusCode == 200) {
-      // Map to Object 에 문제가 있음
-      movies = jsonDecode(response.body)['resultList'].map<Movie>( (article) {
-        return Movie.fromMap(article);
-      }).toList();
-      print(response.body);
+      print(movieSeq);
+        if(jsonDecode(response.body)['resultList']?.length > 0){
+          movie = Movie.fromMap(jsonDecode(response.body)['resultList'][0]);
+        }else{
+          return getMovie(movieSeq - 1);
+        }
+      if (movie.posters == null || movie.posters == '') {
+        print(movieSeq);
+        return getMovie(movieSeq - 1);
+      } else {
+        return movie;
+      }
     }
-
-    return movies;
+    return movie;
   }
 
 

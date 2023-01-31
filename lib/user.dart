@@ -30,25 +30,23 @@ class _UserState extends State<User> {
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.black,
           onTap: (index) => {Navigator.pushNamed(context, '/$index')},
+          selectedItemColor: Color.fromRGBO(179, 18, 23, 1),
+          currentIndex: 2,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.text_snippet),
+              icon: Icon(Icons.today),
               label: '오늘의 추천',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: '홈',
+              icon: Icon(Icons.text_snippet),
+              label: '카테고리',
             ),
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.people,
-                color: Colors.white,
-              ),
+              icon: Icon(Icons.people,),
               label: '마이 페이지',
             ),
           ],
           unselectedItemColor: Colors.white,
-          selectedItemColor: Color.fromRGBO(179, 18, 23, 1),
         ),
       ),
     );
