@@ -25,6 +25,25 @@ class MovieProvider{
     return movie;
   }
 
+  static Future<List<Movie>> getCategorisedMovie(
+      {category, keywords, pageIndex, countPerPage}) async {
+    var movies = null;
+    final response = await http.get(Uri.parse("http://localhost:8080/movieHam/api/movie/search/$category?keywords=$keywords&required=posters&pageIndex=$pageIndex&countPerPage=$countPerPage"));
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      if(data["error"] != null){
+        return movies;
+      }
+      if(data['resultList'].length > 0) {
+        movies = data['resultList'].map<Movie>( (movie) {
+          return Movie.fromMap(movie);
+        }).toList();
+      }
+    }
+    return movies;
+  }
+
 
 }
 
@@ -66,6 +85,7 @@ class Movie{
   });
 
   Movie.fromMap(Map<String, dynamic>? map) {
+    posters = map?['posters']?? '';
     docid = map?['docid'] ?? '';
     movieId = map?['movieId'] ?? '';
     movieSeq = map?['movieSeq'] ?? '';
@@ -85,7 +105,6 @@ class Movie{
     repRatDate = map?['repRatDate'] ?? '';
     repRlsDate = map?['repRlsDate'] ?? '';
     keywords = map?['keywords'] ?? '';
-    posters = map?['posters'] ?? '';
     stlls = map?['stlls'] ?? '';
     openThtr = map?['openThtr'] ?? '';
     awards1 = map?['awards1'] ?? '';
