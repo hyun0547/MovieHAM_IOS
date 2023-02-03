@@ -57,6 +57,7 @@ class _HomeState extends State<Home> {
   late List<Movie> currentMovies = [];
 
   var itemCount;
+  var scrollLoading = false;
 
   final ScrollController _controller = ScrollController();
 
@@ -75,8 +76,14 @@ class _HomeState extends State<Home> {
   _scrollListener() async {
     if (_controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
+      setState(() {
+        scrollLoading = true;
+      });
       _controller.position.moveTo(_controller.position.maxScrollExtent);
       nextMovies = await MovieProvider.getCategorisedMovie(category: currentCategory,keywords: currentKeyword,pageIndex: currentPageIndex,countPerPage: 10);
+      setState(() {
+        scrollLoading = false;
+      });
       setState(() {
         currentPageIndex = currentPageIndex + 1;
         itemCount = currentMovies.length;
@@ -178,34 +185,38 @@ class _HomeState extends State<Home> {
                   controller: _controller,
                   itemCount: itemCount,
                   itemBuilder: (context, index) {
-                    return Padding(
-                        padding: const EdgeInsets.only(
-                          top: 10,
-                          bottom: 15,
-                        ),
-                        child: GestureDetector(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 0.2,
-                                color: Colors.white,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            height: 200,
+                    if (!scrollLoading) {
+                      return Padding(
+                          padding: const EdgeInsets.only(
+                            top: 10,
+                            bottom: 15,
+                          ),
+                          child: GestureDetector(
                             child: Container(
                               decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(currentMovies[index]
-                                      .posters
-                                      .split('|')[0]),
+                                border: Border.all(
+                                  width: 0.2,
+                                  color: Colors.white,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              height: 200,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(currentMovies[index]
+                                        .posters
+                                        .split('|')[0]),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ));
-                  },
+                          ));
+                    }else{
+                      return Text("loading");
+                    }
+                  }
                 ),
         ),
         bottomNavigationBar: BottomNavigationBar(
