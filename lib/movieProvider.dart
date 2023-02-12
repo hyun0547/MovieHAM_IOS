@@ -6,29 +6,13 @@ class MovieProvider{
 
   static Future<Movie> getMovie(movieSeq) async {
     var movie = null;
-    final response = await http.get(Uri.parse("http://localhost:8080/movieHam/api/movie/search/movieSeq?keywords=${movieSeq ?? 0}"));
-
-    if (response.statusCode == 200) {
-      print(movieSeq);
-        if(jsonDecode(response.body)['resultList']?.length > 0){
-          movie = Movie.fromMap(jsonDecode(response.body)['resultList'][0]);
-        }else{
-          return getMovie(movieSeq - 1);
-        }
-      if (movie.posters == null || movie.posters == '') {
-        print(movieSeq);
-        return getMovie(movieSeq - 1);
-      } else {
-        return movie;
-      }
-    }
     return movie;
   }
 
   static Future<List<Movie>> getCategorisedMovie(
       {category, keywords, pageIndex, countPerPage}) async {
     var movies = null;
-    final response = await http.get(Uri.parse("http://localhost:8080/movieHam/api/movie/search/$category?keywords=$keywords&required=posters&pageIndex=$pageIndex&countPerPage=$countPerPage"));
+    final response = await http.get(Uri.parse("http://localhost:8080/movieHam/api/movie/search/$category?keywords=$keywords&required=posterPath&pageIndex=$pageIndex&countPerPage=$countPerPage"));
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
@@ -48,97 +32,73 @@ class MovieProvider{
 }
 
 class Movie{
-  late String docid;            // 영화코드
 
-  late String movieId;          // ID
-  late String movieSeq;         // SEQ
-  late String title;            // 제목
-  late String titleEng;         // 영문제명
-  late String prodYear;         // 제작년도
-  late String nation;           // 국가
-  late String company;          // 제작사
-  late String plotKor;          // 줄거리
-  late String plotEng;          // 줄거리(영문)
-  late String runtime;          // 러닝타임
-  late String rating;           // 관람등급
-  late String genre;            // 장르
-  late String type;             // 유형구분
-  late String useClassification;      // 용도구분
-  late String ratedYn;          // 심의여부
-  late String repRatDate;       // 심의날짜
-  late String repRlsDate;       // 개봉일
-  late String keywords;         // 키워드
-  late String posters;          // 포스터URL
-  late String stlls;            // 스틸샷URL
-  late String openThtr;         // 개봉극장
-  late String awards1;          // 수상내역1
-  late String awards2;          // 수상내역2
-  late String regDate;          // 등록일
-  late String modDate;          // 수정일
+  late String movieId;
 
-  late List<Actor> actorList;
-  late List<Director> directorList;
+  late String adult;
+  late String backdropPath;
+  late String originalLanguage;
+  late String originalTitle;
+  late String overview;
+  late String popularity;
+  late String posterPath;
+  late String releaseDate;
+  late String title;
+  late String voteAverage;
+  late String voteCount;
+  late String genreList;
+
+  late List<People> peopleList;
 
   Movie({
     required this.title,
-    required this.docid
+    required this.movieId
   });
 
   Movie.fromMap(Map<String, dynamic>? map) {
-    posters = map?['posters']?? '';
-    docid = map?['docid'] ?? '';
-    movieId = map?['movieId'] ?? '';
-    movieSeq = map?['movieSeq'] ?? '';
-    title = map?['title'] ?? '';
-    titleEng = map?['titleEng'] ?? '';
-    prodYear = map?['prodYear'] ?? '';
-    nation = map?['nation'] ?? '';
-    company = map?['company'] ?? '';
-    plotKor = map?['plotKor'] ?? '';
-    plotEng = map?['plotEng'] ?? '';
-    runtime = map?['runtime'] ?? '';
-    rating = map?['rating'] ?? '';
-    genre = map?['genre'] ?? '';
-    type = map?['type'] ?? '';
-    useClassification = map?['useClassification'] ?? '';
-    ratedYn = map?['ratedYn'] ?? '';
-    repRatDate = map?['repRatDate'] ?? '';
-    repRlsDate = map?['repRlsDate'] ?? '';
-    keywords = map?['keywords'] ?? '';
-    stlls = map?['stlls'] ?? '';
-    openThtr = map?['openThtr'] ?? '';
-    awards1 = map?['awards1'] ?? '';
-    awards2 = map?['awards2'] ?? '';
-    regDate = map?['regDate'] ?? '';
-    modDate = map?['modDate'] ?? '';
 
-    (map?['actorList'] as List)?.map((item) => Actor.fromMap(item))?.toList();
+    movieId = map?['movieId']?? '';
+    adult = map?['adult']?? '';
+    backdropPath = map?['backdropPath']?? '';
+    originalLanguage = map?['originalLanguage']?? '';
+    originalTitle = map?['originalTitle']?? '';
+    overview = map?['overview']?? '';
+    popularity = map?['popularity']?? '';
+    posterPath = map?['posterPath']?? '';
+    releaseDate = map?['releaseDate']?? '';
+    title = map?['title']?? '';
+    voteAverage = map?['voteAverage']?? '';
+    voteCount = map?['voteCount']?? '';
+
+    genreList = map?['genreList']?? '';
+
+    (map?['peopleList'] as List)?.map((item) => People.fromMap(item))?.toList();
 
   }
 }
 
-class Director {
-  late String directorId;                 // 감독코드
 
-  late String directorNm;                 // 감독명
-  late String directorEnNm;
+class People {
 
-  Director.fromMap(Map<String, dynamic>? map) {
-    directorId = map?['directorId'] ?? '';
-    directorNm = map?['directorNm'] ?? '';
-    directorEnNm = map?['directorEnNm'] ?? '';
-  }
-}
+  late String peopleId;
+  late String adult;
+  late String gender;
+  late String knownForDepartment;
+  late String name;
+  late String originalName;
+  late String popularity;
+  late String profilePath;
+  late String job;
 
-class Actor {
-  late String actorId;                // 배우코드
-
-  late String actorNm;                // 배우명
-  late String actorEnNm;              // 배우영문명
-
-  Actor.fromMap(Map<String, dynamic>? map) {
-    actorId = map?['actorId'] ?? '';
-    actorNm = map?['actorNm'] ?? '';
-    actorEnNm = map?['actorEnNm'] ?? '';
+  People.fromMap(Map<String, dynamic>? map) {
+    peopleId = map?['peopleId']?? '';
+    adult = map?['adult']?? '';
+    gender = map?['gender']?? '';
+    knownForDepartment = map?['knownForDepartment']?? '';
+    name = map?['name']?? '';
+    originalName = map?['originalName']?? '';
+    popularity = map?['popularity']?? '';
+    profilePath = map?['profilePath']?? '';
+    job = map?['job']?? '';
   }
 }

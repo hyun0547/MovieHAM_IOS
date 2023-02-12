@@ -11,34 +11,25 @@ class _HomeState extends State<Home> {
   final categoryDepth1 = ["장르", "개봉연도", "나라"];
   final category = {
     "장르": [
-      "멜로/로맨스",
-      "드라마",
-      "에로",
-      "코메디",
-      "가족",
-      "뮤지컬",
-      "공포",
-      "SF",
-      "액션",
-      "스릴러",
-      "어드벤처",
+      "모험",
       "판타지",
-      "미스터리",
-      "범죄",
-      "시대극/사극",
-      "전쟁",
-      "무협",
-      "스포츠",
-      "로드무비",
-      "서부",
-      "뮤직",
-      "옴니버스",
-      "전기",
-      "실험",
-      "아동",
+      "애니메이션",
+      "드라마",
+      "공포",
+      "액션",
+      "코미디",
       "역사",
-      "인물",
-      "재난"
+      "서부",
+      "스릴러",
+      "범죄",
+      "다큐멘터리",
+      "SF",
+      "미스터리",
+      "음악",
+      "로맨스",
+      "가족",
+      "전쟁",
+      "TV 영화",
     ],
     "개봉연도": ["2000", "2010", "2020"],
     "나라": ["대한민국", "일본", "미국"]
@@ -74,20 +65,22 @@ class _HomeState extends State<Home> {
   }
 
   _scrollListener() async {
-    if (_controller.offset >= _controller.position.maxScrollExtent &&
-        !_controller.position.outOfRange) {
+    if (_controller.offset >= _controller.position.maxScrollExtent * 0.8 &&
+        !_controller.position.outOfRange &&
+        !scrollLoading) {
       setState(() {
         scrollLoading = true;
       });
-      _controller.position.moveTo(_controller.position.maxScrollExtent);
-      nextMovies = await MovieProvider.getCategorisedMovie(category: currentCategory,keywords: currentKeyword,pageIndex: currentPageIndex,countPerPage: 10);
+      nextMovies = await MovieProvider.getCategorisedMovie(
+          category: currentCategory,
+          keywords: currentKeyword,
+          pageIndex: currentPageIndex,
+          countPerPage: 10);
       setState(() {
-        scrollLoading = false;
-      });
-      setState(() {
+        currentMovies = List.from(currentMovies)..addAll(nextMovies);
         currentPageIndex = currentPageIndex + 1;
         itemCount = currentMovies.length;
-        currentMovies = List.from(currentMovies)..addAll(nextMovies);
+        scrollLoading = false;
       });
     }
   }
@@ -109,116 +102,134 @@ class _HomeState extends State<Home> {
           centerTitle: false,
         ),
         body: Container(
-          color: Colors.black,
-          child: currentMovies.isEmpty
-              ? ListView.separated(
-                  separatorBuilder: (BuildContext context, int index) =>
-                      const Divider(),
-                  itemCount: 3,
-                  itemBuilder: (context, index) {
-                    return Card(
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.white, width: 0.5),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        color: Colors.black,
-                        shadowColor: Colors.white,
-                        child: ExpansionTile(
-                          title: Padding(
-                            padding: EdgeInsets.all(15),
-                            //apply padding to all four sides
-                            child: Text(
-                              categoryDepth1[index],
-                              style: const TextStyle(
-                                letterSpacing: 5,
-                                fontSize: 22,
-                                color: Colors.white,
-                              ),
-                            ),
+            color: Colors.black,
+            child: currentMovies.isEmpty
+                ? ListView.separated(
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const Divider(),
+                    itemCount: 3,
+                    itemBuilder: (context, index) {
+                      return Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white, width: 0.5),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          children: <Widget>[
-                            SizedBox(
-                              height: (category[categoryDepth1[index]]
-                                      ?.length
-                                      .toDouble())! *
-                                  60,
-                              child: ListView.builder(
-                                  itemCount:
-                                      category[categoryDepth1[index]]?.length,
-                                  itemBuilder: (context, index2) {
-                                    return ListTile(
-                                      onTap: () async {
-                                        currentMovies = await MovieProvider
-                                            .getCategorisedMovie(
-                                          category: categoryCode[categoryDepth1[index]],
-                                          keywords: category[categoryDepth1[index]]![index2],
-                                          pageIndex: index,
-                                          countPerPage: 10,
-                                        );
-
-                                        setState(()  {
-                                          currentMovies = currentMovies;
-                                          itemCount = currentMovies.length;
-                                          currentCategory = categoryCode[
-                                              categoryDepth1[index]];
-                                          currentKeyword = category[
-                                              categoryDepth1[index]]![index2];
-                                          currentPageIndex = index + 1;
-                                        });
-                                      },
-                                      title: Text(
-                                        textAlign: TextAlign.center,
-                                        category[categoryDepth1[index]]![
-                                            index2],
-                                        style: const TextStyle(
-                                          fontSize: 22,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                            )
-                          ],
-                        ));
-                  })
-              : ListView.builder(
-                  controller: _controller,
-                  itemCount: itemCount,
-                  itemBuilder: (context, index) {
-                    if (!scrollLoading) {
-                      return Padding(
-                          padding: const EdgeInsets.only(
-                            top: 10,
-                            bottom: 15,
-                          ),
-                          child: GestureDetector(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 0.2,
+                          color: Colors.black,
+                          shadowColor: Colors.white,
+                          child: ExpansionTile(
+                            title: Padding(
+                              padding: EdgeInsets.all(15),
+                              //apply padding to all four sides
+                              child: Text(
+                                categoryDepth1[index],
+                                style: const TextStyle(
+                                  letterSpacing: 5,
+                                  fontSize: 22,
                                   color: Colors.white,
                                 ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              height: 200,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: NetworkImage(currentMovies[index]
-                                        .posters
-                                        .split('|')[0]),
-                                  ),
-                                ),
                               ),
                             ),
+                            children: <Widget>[
+                              SizedBox(
+                                height: (category[categoryDepth1[index]]
+                                        ?.length
+                                        .toDouble())! *
+                                    60,
+                                child: ListView.builder(
+                                    itemCount:
+                                        category[categoryDepth1[index]]?.length,
+                                    itemBuilder: (context, index2) {
+                                      return ListTile(
+                                        onTap: () async {
+                                          currentMovies = await MovieProvider
+                                              .getCategorisedMovie(
+                                            category: categoryCode[
+                                                categoryDepth1[index]],
+                                            keywords: category[
+                                                categoryDepth1[index]]![index2],
+                                            pageIndex: 0,
+                                            countPerPage: 10,
+                                          );
+
+                                          setState(() {
+                                            currentMovies = currentMovies;
+                                            itemCount = currentMovies.length;
+                                            currentCategory = categoryCode[
+                                                categoryDepth1[index]];
+                                            currentKeyword = category[
+                                                categoryDepth1[index]]![index2];
+                                            currentPageIndex = 0;
+                                          });
+                                        },
+                                        title: Text(
+                                          textAlign: TextAlign.center,
+                                          category[categoryDepth1[index]]![
+                                              index2],
+                                          style: const TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              )
+                            ],
                           ));
-                    }else{
-                      return Text("loading");
-                    }
-                  }
-                ),
-        ),
+                    })
+                : Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height,
+                        child: ListView.builder(
+                            controller: _controller,
+                            itemCount: itemCount,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 10,
+                                  bottom: 15,
+                                ),
+                                child: GestureDetector(
+                                    child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 0.2,
+                                      color: Colors.white,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  height: 200,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: NetworkImage(currentMovies[index]
+                                            .posters
+                                            .split('|')[0]),
+                                      ),
+                                    ),
+                                  ),
+                                )),
+                              );
+                            }),
+                      ),
+                      scrollLoading
+                          ? Container()
+                          : Positioned(
+                              width: MediaQuery.of(context).size.width,
+                              bottom: 0,
+                              child: const SizedBox(
+                                height: 20.0,
+                                width: 20.0,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  semanticsLabel: 'Circular progress indicator',
+                                ),
+                              ),
+                            )
+                    ],
+                  )),
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.black,
           onTap: (index) => {Navigator.pushNamed(context, '/$index')},
