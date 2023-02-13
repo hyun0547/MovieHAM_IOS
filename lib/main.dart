@@ -75,7 +75,7 @@ class _AppState extends State<App> {
                                   image: DecorationImage(
                                     fit: BoxFit.fill,
                                     image: NetworkImage(snapshot
-                                        .data!.posters
+                                        .data!.posterPath
                                         .split("|")[0]),
                                   ),
                                 ),
@@ -89,7 +89,7 @@ class _AppState extends State<App> {
                                           child: Container(
                                             margin: EdgeInsets.all(20),
                                             child: Text(
-                                              snapshot.data!.plotKor,
+                                              snapshot.data!.overview,
                                               style: const TextStyle(
                                                 letterSpacing: 1,
                                                 wordSpacing: 1,
@@ -102,15 +102,15 @@ class _AppState extends State<App> {
                                             ),
                                           )),
                                     ),
-                                    Container(
-                                      alignment: Alignment.topRight,
-                                      margin: EdgeInsets.all(5),
-                                      child: snapshot.data!.rating.isEmpty ? null : Image(
-                                          width: 30,
-                                          image: AssetImage(
-                                               'images/rating/KMRB_${((snapshot.data!.rating).substring(0, 2) == '전체' ? "All" : (snapshot.data!.rating).substring(0, 2))}.png')
-                                      ),
-                                    ),
+                                    // Container(
+                                    //   alignment: Alignment.topRight,
+                                    //   margin: EdgeInsets.all(5),
+                                    //   child: snapshot.data!.rating.isEmpty ? null : Image(
+                                    //       width: 30,
+                                    //       image: AssetImage(
+                                    //            'images/rating/KMRB_${((snapshot.data!.rating).substring(0, 2) == '전체' ? "All" : (snapshot.data!.rating).substring(0, 2))}.png')
+                                    //   ),
+                                    // ),
                                   ],
                                 )),
                           ),
@@ -125,7 +125,7 @@ class _AppState extends State<App> {
                                       icon: const Icon(Icons.thumb_up),
                                       tooltip: 'Increase volume by 10',
                                       onPressed: () {
-                                        setState(() {movie = MovieProvider.getMovie(int.parse(snapshot.data!.movieSeq)-1);});
+                                        // setState(() {movie = MovieProvider.getMovie(int.parse(snapshot.data!.movieSeq)-1);});
                                       }),
                                   IconButton(
                                       iconSize: 50,
@@ -133,7 +133,7 @@ class _AppState extends State<App> {
                                       icon: const Icon(Icons.thumb_down),
                                       tooltip: 'Increase volume by 10',
                                       onPressed: () {
-                                        setState(() {movie = MovieProvider.getMovie(int.parse(snapshot.data!.movieSeq)-1);});
+                                        // setState(() {movie = MovieProvider.getMovie(int.parse(snapshot.data!.movieSeq)-1);});
                                       }),
                                   IconButton(
                                       iconSize: 50,
@@ -141,7 +141,7 @@ class _AppState extends State<App> {
                                       icon: const Icon(Icons.next_plan),
                                       tooltip: 'Increase volume by 10',
                                       onPressed: () {
-                                        setState(() {movie = MovieProvider.getMovie(int.parse(snapshot.data!.movieSeq)-1);});
+                                        // setState(() {movie = MovieProvider.getMovie(int.parse(snapshot.data!.movieSeq)-1);});
                                       }),
                                   IconButton(
                                       iconSize: 50,
@@ -149,7 +149,7 @@ class _AppState extends State<App> {
                                       icon: const Icon(Icons.add_chart),
                                       tooltip: 'Increase volume by 10',
                                       onPressed: () {
-                                        setState(() {movie = MovieProvider.getMovie(int.parse(snapshot.data!.movieSeq)-1);});
+                                        // setState(() {movie = MovieProvider.getMovie(int.parse(snapshot.data!.movieSeq)-1);});
                                       }),
                                 ],
                               ),
@@ -172,7 +172,7 @@ class _AppState extends State<App> {
                                 ),
                                 SizedBox(width: 10),
                                 Text(
-                                  "[${snapshot.data!.genre}]",
+                                  "[${snapshot.data!.genreList}]",
                                   style: const TextStyle(
                                     fontSize: 17,
                                     fontFamily: 'NanumSquareEB',

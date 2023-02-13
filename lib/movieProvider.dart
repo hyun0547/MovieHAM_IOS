@@ -33,21 +33,21 @@ class MovieProvider{
 
 class Movie{
 
-  late String movieId;
+  late int movieId;
 
-  late String adult;
+  late bool adult;
   late String backdropPath;
   late String originalLanguage;
   late String originalTitle;
   late String overview;
-  late String popularity;
+  late double popularity;
   late String posterPath;
   late String releaseDate;
   late String title;
-  late String voteAverage;
-  late String voteCount;
-  late String genreList;
+  late double voteAverage;
+  late int voteCount;
 
+  late List<Genre> genreList;
   late List<People> peopleList;
 
   Movie({
@@ -70,23 +70,32 @@ class Movie{
     voteAverage = map?['voteAverage']?? '';
     voteCount = map?['voteCount']?? '';
 
-    genreList = map?['genreList']?? '';
-
+    (map?['genreList'] as List)?.map((item) => Genre.fromMap(item))?.toList();
     (map?['peopleList'] as List)?.map((item) => People.fromMap(item))?.toList();
 
   }
 }
 
+class Genre {
+  late int genreId;
+  late String name;
+
+  Genre.fromMap(Map<String,dynamic>? map){
+    genreId = map?['genreId']?? '';
+    name = map?['name']?? '';
+  }
+}
 
 class People {
 
-  late String peopleId;
-  late String adult;
-  late String gender;
+  late int peopleId;
+
+  late bool adult;
+  late int gender;
   late String knownForDepartment;
   late String name;
   late String originalName;
-  late String popularity;
+  late double popularity;
   late String profilePath;
   late String job;
 

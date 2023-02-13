@@ -205,7 +205,7 @@ class _HomeState extends State<Home> {
                                       image: DecorationImage(
                                         fit: BoxFit.fill,
                                         image: NetworkImage(currentMovies[index]
-                                            .posters
+                                            .posterPath
                                             .split('|')[0]),
                                       ),
                                     ),
