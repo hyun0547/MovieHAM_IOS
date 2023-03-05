@@ -32,6 +32,9 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.13.4
+  kakao_flutter_sdk_user: ^1.4.1 # 카카오 로그인
+  kakao_flutter_sdk_share: ^1.4.1 # 카카오톡 공유
+  flutter_secure_storage : ^5.0.2 # flutter_secure_storage 관련 패키지
 
 
   # The following adds the Cupertino Icons font to your application.
