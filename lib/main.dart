@@ -6,6 +6,7 @@ import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
 import 'package:movieham_app/login_screen.dart';
 import 'package:movieham_app/provider/kakao_login.dart';
 import 'package:movieham_app/movie_ham/random_movie_screen.dart';
+import 'package:provider/provider.dart';
 
 import 'intro_screen.dart';
 import 'models/login_model.dart';
@@ -46,7 +47,7 @@ class _AppState extends State<App> {
   _asyncMethod() async {
     await Future.delayed(const Duration(milliseconds: 1500));
     var userInfo = await storage.read(key: "user");
-
+    
     setState((){
       userLoaded = true;
       loginModel.initLogin(jsonDecode(userInfo!));
@@ -60,7 +61,7 @@ class _AppState extends State<App> {
       transitionBuilder: (Widget child, Animation<double> animation) {
         return FadeTransition(child: child, opacity: animation);
       },
-      child: userLoaded ? (loginModel.isLogined ? MovieHam() : LoginScreen()): IntroScreen(),
+      child: userLoaded ? (loginModel.isLogined ? Provider(create:(context)=>loginModel.user, child:MovieHam()) : LoginScreen()): IntroScreen(),
     );
   }
 }
