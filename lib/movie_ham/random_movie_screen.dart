@@ -16,7 +16,7 @@ class RandomMovieScreen extends StatefulWidget{
 }
 
 class _RandomMovieScreenState extends State<RandomMovieScreen>{
-  final screen_name = ["randomMovieScreen", "", ""];
+  final screen_name = ["randomMovieScreen", "categoriesMovieScreen", ""];
   var _plotVisible = false;
   var user;
 
@@ -39,7 +39,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
           centerTitle: false,
         ),
         body: FutureBuilder(
-          future: MovieProvider.getNotClassifiedMovie(Provider.of<User>(context).id),
+          future: MovieProvider.getNotClassifiedMovies(Provider.of<User>(context).id, '전체', '', '1', '0').then((value) => value![0]),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData == false) {
               return CircularProgressIndicator();

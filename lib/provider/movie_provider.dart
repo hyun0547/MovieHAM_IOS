@@ -1,26 +1,28 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:movieham_app/constants/constants_code.dart';
 
 import '../models/api_result_model.dart';
 
 class MovieProvider{
 
-  static Future<Movie?> getNotClassifiedMovie(int userId) async {
+  static Future<List<Movie>?> getNotClassifiedMovies(int userId, String group, String groupKeyword, String countPerPage, String pageIndex) async {
     ApiResultModel apiResult;
     final response = await http.post(
-      Uri.parse("https://movieapi.ssony.me/movie/notClassifiedList/all/popularity"),
+      Uri.parse("http://127.0.0.1:8080/movie/notClassifiedList/${ConstantsCode.KrToCode(group)}/popularity"),
       body: <String, String> {
         'userId': '$userId',
-        'countPerPage':'1',
-        'pageIndex':'0'
+        'countPerPage':countPerPage,
+        'pageIndex':pageIndex,
+        'groupKeyword': '${ConstantsCode.KrToCode(groupKeyword)}'
       },
     );
 
     if (response.statusCode == 200) {
       apiResult = ApiResultModel(jsonDecode(response.body));
       if(apiResult.status == "success") {
-        return apiResult.movieList[0];
+        return apiResult.movieList;
       }else{
         return null;
       }
