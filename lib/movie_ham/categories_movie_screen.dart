@@ -13,7 +13,8 @@ class CategoriesMovieScreen extends StatefulWidget{
 
 class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
   final screen_name = ["randomMovieScreen", "categoriesMovieScreen", ""];
-  final group = {"언어":["한국어", "영어", "일본어"], "장르":["액션"], "배우":[]};
+  final List<String> years = List.generate(30, (index) => "${DateTime.now().year - index}");
+  final group = {"언어":["한국어", "영어", "일본어"], "장르":["액션"], "개봉연도":[]};
 
   var groupSelected = false;
   late List<Movie>? currentMovies;
@@ -88,15 +89,29 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 height: 250,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fill,
-                                      image: NetworkImage(currentMovies![index].backdropPath),
+                                child: Column(children: [
+                                  Expanded(
+                                    child: Container(
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: NetworkImage(currentMovies![index].backdropPath),
+                                      ),
                                     ),
-                                  ),
-                                  child: Column(children: [Positioned(child: Text("test"),)],)
-                                ),
+                                  ),),
+                                  Container(
+                                    padding: EdgeInsets.only(left: 15, bottom: 5),
+                                    height: 30,
+                                    alignment: Alignment.bottomLeft,
+                                    child: Text(
+                                      currentMovies![index].title,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15
+                                      ),
+                                    ),
+                                  )
+                                ],)
                               )),
                         );
                       }),

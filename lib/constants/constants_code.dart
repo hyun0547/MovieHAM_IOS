@@ -7,6 +7,7 @@ class ConstantsCode {
     "한국어": "ko",
     "영어": "en",
     "일본어": "ja",
+    "전체": "all",
   };
 
   static String? KrToCode(String target){
