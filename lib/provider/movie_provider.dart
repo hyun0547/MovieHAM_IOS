@@ -9,8 +9,10 @@ class MovieProvider{
 
   static Future<List<Movie>?> getNotClassifiedMovies(int userId, String group, String groupKeyword, String countPerPage, String pageIndex) async {
     ApiResultModel apiResult;
-    final response = await http.post(
-      Uri.parse("http://127.0.0.1:8080/movie/notClassifiedList/${ConstantsCode.KrToCode(group)}/popularity"),
+    final response = await http.
+
+    post(
+      Uri.parse("https://movieapi.ssony.me/movie/notClassifiedList/${ConstantsCode.KrToCode(group)}/popularity"),
       body: <String, String> {
         'userId': '$userId',
         'countPerPage':countPerPage,
@@ -34,7 +36,7 @@ class MovieProvider{
   static Future<bool> insertWish(
       {required String userId, required String movieId, required String seenYn, required String wishStatus}) async {
     final response = await http.post(
-      Uri.parse("http://movieapi.ssony.me/wish/insert"),
+      Uri.parse("https://movieapi.ssony.me/wish/insert"),
       body: <String, String> {
         'userId': '$userId',
         'movieId': '$movieId',

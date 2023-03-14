@@ -12,14 +12,23 @@ class CategoriesMovieScreen extends StatefulWidget{
 }
 
 class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
+  final needTextKeywordGroup = ["배우", "감독"];
   final screen_name = ["randomMovieScreen", "categoriesMovieScreen", ""];
-  final List<String> years = List.generate(30, (index) => "${DateTime.now().year - index}");
-  final group = {"언어":["한국어", "영어", "일본어"], "장르":["액션"], "개봉연도":[]};
+  final Map<String, List<String>> group = {
+    "언어":["한국어", "영어", "일본어"],
+    "장르":['판타지','코미디','전쟁','음악','역사','액션','애니메이션','스릴러','서부','범죄','미스터리','모험','로맨스','드라마','다큐멘터리','공포','가족','TV' '영화','SF'],
+    "개봉연도":List.generate(30, (index) => '${DateTime.now().year-index}')
+  };
 
-  var groupSelected = false;
-  late List<Movie>? currentMovies;
+  var selectedGroup = "";
+  var selectedGroupKeyword = "";
+  var currentPage = 0;
+  late List<Movie>? currentMovies = [];
+  late List<Movie>? nextMovies = [];
   final ScrollController _controller = ScrollController();
-  var scrollLoading = true;
+  var scrollLoading = false;
+  late FocusNode focusNode = FocusNode();
+  late var errorMessage = null;
 
   var user;
 
@@ -36,9 +45,17 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
   }
 
   _scrollListener() async {
-    if (_controller.offset >= _controller.position.maxScrollExtent * 0.8 &&
+    if (_controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
-      print("test");
+      setState((){
+        scrollLoading = true;
+      });
+      nextMovies = await MovieProvider.getNotClassifiedMovies(user.id, selectedGroup, selectedGroupKeyword, '10', '$currentPage');
+      setState((){
+        scrollLoading = false;
+        currentPage++;
+        currentMovies!.addAll(nextMovies!);
+      });
     }
   }
 
@@ -63,7 +80,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
         ),
         body: Container(
             color: Colors.black,
-            child: groupSelected
+            child: selectedGroup.isNotEmpty && currentMovies!.length >= 1
                 ? Stack(
               fit: StackFit.expand,
               children: [
@@ -83,8 +100,8 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                                 clipBehavior: Clip.hardEdge,
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    width: 0.2,
-                                    color: Colors.white,
+                                    width: 1,
+                                    color: Color(0xff333333),
                                   ),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -93,16 +110,18 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                                   Expanded(
                                     child: Container(
                                     decoration: BoxDecoration(
-                                      image: DecorationImage(
+                                      image:  currentMovies![index].backdropPath.isNotEmpty? DecorationImage(
                                         fit: BoxFit.fill,
                                         image: NetworkImage(currentMovies![index].backdropPath),
+                                      ) : DecorationImage(
+                                        image: AssetImage('images/logo/logoW.png'),
                                       ),
                                     ),
                                   ),),
                                   Container(
-                                    padding: EdgeInsets.only(left: 15, bottom: 5),
-                                    height: 30,
-                                    alignment: Alignment.bottomLeft,
+                                    padding: EdgeInsets.only(left: 15),
+                                    height: 45,
+                                    alignment: Alignment.centerLeft,
                                     child: Text(
                                       currentMovies![index].title,
                                       style: TextStyle(
@@ -117,88 +136,144 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                       }),
                 ),
                 scrollLoading
-                    ? Container()
-                    : Positioned(
-                  width: MediaQuery.of(context).size.width,
-                  bottom: 0,
-                  child: const SizedBox(
-                    height: 20.0,
-                    width: 20.0,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      semanticsLabel: 'Circular progress indicator',
-                    ),
-                  ),
+                    ? Positioned(
+                    bottom: 5,
+                    left: MediaQuery.of(context).size.width / 2 - 28,
+                    child: Container(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        semanticsLabel: 'Circular progress indicator',
+                      ),
+                    )
                 )
+                    :Container()
               ],
             )
                 : ListView.separated(
                 separatorBuilder: (BuildContext context, int index) =>
                 const Divider(),
-                itemCount: 3,
+                itemCount: group.keys.toList().length + needTextKeywordGroup.length,
                 itemBuilder: (context, index) {
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.white, width: 0.5),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    color: Colors.black,
-                    shadowColor: Colors.white,
-                    child: ExpansionTile(
-                      title: Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Text(
-                          group.keys.toList()[index],
-                          style: const TextStyle(
-                            letterSpacing: 5,
-                            fontSize: 22,
+                  if(group.keys.toList().length > index)
+                    return Card(
+                      shape: Border(
+                        bottom: BorderSide(color: Colors.white, width: 1),
+                      ),
+                      color: Colors.black,
+                      shadowColor: Colors.white,
+                      child: ExpansionTile(
+                        trailing: Icon(
+                            Icons.keyboard_arrow_right,
                             color: Colors.white,
+                        ),
+                        title: Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text(
+                            group.keys.toList()[index],
+                            style: const TextStyle(
+                              letterSpacing: 5,
+                              fontSize: 22,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ),
-                      children: <Widget>[
-                        SizedBox(
-                          height: (group[group.keys.toList()[index]]?.length.toDouble())! * 60,
-                          child: ListView.builder(
-                              itemCount:
-                              group[group.keys.toList()[index]]?.length,
-                              itemBuilder: (context, index2) {
-                                return ListTile(
-                                  onTap: () async {
-                                    currentMovies = (await MovieProvider
-                                        .getNotClassifiedMovies(
-                                      user.id,
-                                      '${group.keys.toList()[index]}',
-                                      '${group[group.keys.toList()[index]]![index2]}',
-                                      '10',
-                                      '0',
-                                    ))!;
-                                    print(currentMovies);
+                        children: <Widget>[
+                          SizedBox(
+                            height: 250 < (group[group.keys.toList()[index]]?.length.toDouble())! * 60 ? 250 : (group[group.keys.toList()[index]]?.length.toDouble())! * 60,
+                            child: ListView.builder(
+                                itemCount:
+                                group[group.keys.toList()[index]]?.length,
+                                itemBuilder: (context, index2) {
+                                  return ListTile(
+                                    onTap: () async {
+                                      setState((){
+                                        scrollLoading = true;
+                                      });
+                                      currentMovies = (await MovieProvider
+                                          .getNotClassifiedMovies(
+                                        user.id,
+                                        '${group.keys.toList()[index]}',
+                                        '${group[group.keys.toList()[index]]![index2]}',
+                                        '10',
+                                        '$currentPage',
+                                      ))!;
 
-                                    setState(() {
-                                      currentMovies = currentMovies;
-                                      groupSelected = true;
-                                      // itemCount = currentMovies.length;
-                                      // currentCategory = categoryCode[
-                                      // categoryDepth1[index]];
-                                      // currentKeyword = category[
-                                      // categoryDepth1[index]]![index2];
-                                      // currentPageIndex = 0;
-                                    });
-                                  },
-                                  title: Text(
-                                    group[group.keys.toList()[index]]![index2],
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 22,
-                                      color: Colors.white,
+                                      setState(() {
+                                        scrollLoading = false;
+                                        currentMovies = currentMovies;
+                                        selectedGroup = group.keys.toList()[index];
+                                        selectedGroupKeyword = group[group.keys.toList()[index]]![index2];
+                                        currentPage++;
+                                      });
+                                    },
+                                    title: Text(
+                                      group[group.keys.toList()[index]]![index2],
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 22,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }),
+                                  );
+                                }),
+                          )
+                        ],
+                      ),
+                    );
+                  else return Card(
+                      shape: Border(
+                        bottom: BorderSide(color: Colors.white, width: 1),
+                      ),
+                    color: Colors.black,
+                    shadowColor: Colors.white,
+                    child: needTextKeywordGroup[index-group.keys.toList().length] == selectedGroup?
+                    TextField(
+                        cursorHeight: 25,
+                        autocorrect:false,
+                        autofocus:false,
+                        onSubmitted:(keyword) async {
+                          currentMovies = await MovieProvider.getNotClassifiedMovies(
+                            user.id, needTextKeywordGroup[index-group.keys.toList().length], keyword,
+                            '10', '0',
+                          );
+                          setState((){
+                            if(selectedGroup == '배우'){
+                              errorMessage = "배우";
+                            }
+                            currentMovies = currentMovies;
+                          });
+                        },
+                        focusNode: focusNode,
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                        decoration: InputDecoration(
+                          // border: OutlineInputBorder(),
+                          // labelText: '$selectedGroup',
+                          errorText: errorMessage,
                         )
-                      ],
-                    ),
+                    ):
+                      ListTile(
+                      title: GestureDetector(
+                        onTap: (){
+                          setState(() {
+                            selectedGroup = needTextKeywordGroup[index-group.keys.toList().length];
+                          });
+                          focusNode.requestFocus();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(15),
+                          child: Text(
+                            needTextKeywordGroup[index-group.keys.toList().length],
+                            style: const TextStyle(
+                              letterSpacing: 5,
+                              fontSize: 22,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      )
+                    )
                   );
                 })),
         bottomNavigationBar: BottomNavigationBar(

@@ -51,6 +51,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                     Expanded(
                         child:Stack(children: <Widget>[
                           GestureDetector(
+
                             onTapDown: (e) {
                               setState(() {
                                 _plotVisible = !_plotVisible;
@@ -61,17 +62,26 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                                 _plotVisible = !_plotVisible;
                               });
                             },
+                            onTapCancel: () {
+                              setState(() {
+                                _plotVisible = !_plotVisible;
+                              });
+                            },
                             child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: MediaQuery.of(context).size.height,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: NetworkImage(snapshot.data!.posterPath),
-                                  ),
-                                ),
                                 child: Stack(
                                   children: [
+                                    Container(
+                                      color: Colors.black,
+                                      width: MediaQuery.of(context).size.width,
+                                      height: MediaQuery.of(context).size.height,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        child: Image.network(
+                                          snapshot.data!.posterPath,
+                                          fit: BoxFit.fill,
+                                        ), // Text(key['title']),
+                                      ),
+                                    ),
                                     Visibility(
                                       visible: _plotVisible,
                                       child: Container(

@@ -50,7 +50,9 @@ class _AppState extends State<App> {
     
     setState((){
       userLoaded = true;
-      loginModel.initLogin(jsonDecode(userInfo!));
+      if(userInfo != null){
+        loginModel.initLogin(jsonDecode(userInfo));
+      }
     });
   }
 

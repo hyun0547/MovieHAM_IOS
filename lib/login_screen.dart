@@ -22,8 +22,9 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () async {
-                      storage.write(
-                          key: "user", value: jsonEncode(viewModel.user));
+                      print("test");
+                      await viewModel.login();
+                      storage.write(key: "user", value: jsonEncode(viewModel.user));
                     },
                     child: Image.asset('images/button/kakao_login.png'),
                   ),

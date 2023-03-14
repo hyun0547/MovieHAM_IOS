@@ -8,6 +8,9 @@ class ConstantsCode {
     "영어": "en",
     "일본어": "ja",
     "전체": "all",
+    "개봉연도": "releaseYear",
+    "배우": "actor",
+    "감독": "director"
   };
 
   static String? KrToCode(String target){
