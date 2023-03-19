@@ -12,12 +12,12 @@ class MovieProvider{
     final response = await http.
 
     post(
-      Uri.parse("https://movieapi.ssony.me/movie/notClassifiedList/${ConstantsCode.KrToCode(group)}/popularity"),
-      body: <String, String> {
+      Uri.parse("http://127.0.0.1:8080/movie/notClassifiedList/${ConstantsCode.KrToCode(group)}/popularity"),
+      body: <String, dynamic> {
         'userId': '$userId',
         'countPerPage':countPerPage,
         'pageIndex':pageIndex,
-        'groupKeyword': '${ConstantsCode.KrToCode(groupKeyword)}'
+        'groupKeyword': ConstantsCode.KrToCode(groupKeyword)
       },
     );
 
@@ -25,6 +25,50 @@ class MovieProvider{
       apiResult = ApiResultModel(jsonDecode(response.body));
       if(apiResult.status == "success") {
         return apiResult.movieList;
+      }else{
+        return null;
+      }
+    }
+
+    return null;
+  }
+
+  static Future<List<Movie>?> getMovies(String group, String groupKeyword, String countPerPage, String pageIndex) async {
+    ApiResultModel apiResult;
+    final response = await http.
+
+    post(
+      Uri.parse("http://127.0.0.1:8080/movie/list/${ConstantsCode.KrToCode(group)}/popularity"),
+      body: <String, dynamic> {
+        'countPerPage':countPerPage,
+        'pageIndex':pageIndex,
+        'groupKeyword': ConstantsCode.KrToCode(groupKeyword)
+      },
+    );
+
+    if (response.statusCode == 200) {
+      apiResult = ApiResultModel(jsonDecode(response.body));
+      if(apiResult.status == "success") {
+        return apiResult.movieList;
+      }else{
+        return null;
+      }
+    }
+
+    return null;
+  }
+
+  static Future<Movie?> getMovie(int groupKeyword) async {
+    final response = await http.
+
+    get(
+      Uri.parse("http://127.0.0.1:8080/movie/$groupKeyword")
+    );
+
+    if (response.statusCode == 200) {
+      var apiResult = ApiResultModel(jsonDecode(response.body));
+      if(apiResult.status == "success") {
+        return apiResult.movieList[0];
       }else{
         return null;
       }

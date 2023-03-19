@@ -4,6 +4,7 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:movieham_app/provider/movie_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../models/api_result_model.dart';
 import '../models/login_model.dart';
 import '../provider/kakao_login.dart';
 
@@ -16,7 +17,7 @@ class RandomMovieScreen extends StatefulWidget{
 }
 
 class _RandomMovieScreenState extends State<RandomMovieScreen>{
-  final screen_name = ["randomMovieScreen", "categoriesMovieScreen", ""];
+  final screen_name = ["categorizedMovieScreen", "randomMovieScreen", "categoriesMovieScreen", "detailsMovieScreen"];
   var _plotVisible = false;
   var user;
 
@@ -45,6 +46,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
               return CircularProgressIndicator();
             }
             else{
+              var movie = snapshot.data as Movie;
               return Container(
                 child: Column(
                   children: <Widget>[
@@ -77,7 +79,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(8.0),
                                         child: Image.network(
-                                          snapshot.data!.posterPath,
+                                          movie.posterPath,
                                           fit: BoxFit.fill,
                                         ), // Text(key['title']),
                                       ),
@@ -90,7 +92,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                                           child: Container(
                                             margin: EdgeInsets.all(20),
                                             child: Text(
-                                              snapshot.data!.overview,
+                                              movie.overview,
                                               style: TextStyle(
                                                 letterSpacing: 1,
                                                 wordSpacing: 1,
@@ -114,10 +116,18 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                                 IconButton(
                                     iconSize: 50,
                                     color: Colors.white,
+                                    icon: const Icon(Icons.info_outline),
+                                    tooltip: '상세',
+                                    onPressed: () {
+                                      detailScreen(movie.movieId, user.id);
+                                    }),
+                                IconButton(
+                                    iconSize: 50,
+                                    color: Colors.white,
                                     icon: const Icon(Icons.thumb_up),
                                     tooltip: '볼거에요',
                                     onPressed: () async {
-                                      await MovieProvider.insertWish(userId:'${user.id}', movieId:'${snapshot.data!.movieId}', seenYn:"N", wishStatus: "W");
+                                      await MovieProvider.insertWish(userId:'${user.id}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "W");
                                       setState(() {});
                                     }),
                                 IconButton(
@@ -126,7 +136,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                                     icon: const Icon(Icons.thumb_down),
                                     tooltip: '안볼거에요',
                                     onPressed: () async {
-                                      await MovieProvider.insertWish(userId:'${user.id}', movieId:'${snapshot.data!.movieId}', seenYn:"N", wishStatus: "N");
+                                      await MovieProvider.insertWish(userId:'${user.id}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "N");
                                       setState(() {});
                                     }),
                                 IconButton(
@@ -135,7 +145,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                                     icon: const Icon(Icons.next_plan),
                                     tooltip: '모르겠어요',
                                     onPressed: () async {
-                                      await MovieProvider.insertWish(userId:'${user.id}', movieId:'${snapshot.data!.movieId}', seenYn:"N", wishStatus: "D");
+                                      await MovieProvider.insertWish(userId:'${user.id}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "D");
                                       setState(() {});
                                     }),
                                 IconButton(
@@ -144,7 +154,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                                     icon: const Icon(Icons.add_chart),
                                     tooltip: '이미 봤어요',
                                     onPressed: () async {
-                                      await MovieProvider.insertWish(userId:'${user.id}', movieId:'${snapshot.data!.movieId}', seenYn:"Y", wishStatus: "Y");
+                                      await MovieProvider.insertWish(userId:'${user.id}', movieId:'${movie.movieId}', seenYn:"Y", wishStatus: "Y");
                                       setState(() {});
                                     }),
                               ],
@@ -158,7 +168,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                     child: Row(
                     children: <Widget>[
                       Text(
-                        snapshot.data!.title,
+                        movie.title,
                         textAlign: TextAlign.left,
                         style: const TextStyle(
                           fontSize: 24,
@@ -169,7 +179,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                       ),
                       SizedBox(width: 10),
                       Text(
-                        "${List.generate(snapshot.data.genreList.length, (index) => snapshot.data.genreList[index].name)}",
+                        "${List.generate(movie.genreList.length, (index) => movie.genreList[index].name)}",
                         style: const TextStyle(
                           fontSize: 12,
                           fontFamily: 'NanumSquareEB',
@@ -185,29 +195,46 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
     }
           },
         ),
-        bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
-        onTap: (index) => {Navigator.pushNamed(context, '/${screen_name[index]}')},
-        selectedItemColor: Color.fromRGBO(179, 18, 23, 1),
-        currentIndex: 0,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.today),
-            label: '오늘의 추천',
+        bottomNavigationBar: Theme(
+          data: Theme.of(context).copyWith(
+            canvasColor: Colors.black,
+            primaryColor: Colors.red,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.text_snippet),
-            label: '카테고리',
+          child: BottomNavigationBar(
+            backgroundColor: Colors.black,
+            onTap: (index) => {if(index!=1) Navigator.pushNamed(context, '/${screen_name[index]}')},
+            selectedItemColor: Color.fromRGBO(179, 18, 23, 1),
+            currentIndex: 1,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.today),
+                label: '오늘 뭐볼까',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.newspaper),
+                label: '새로운 영화',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.text_snippet),
+                label: '카테고리',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.people,
+                ),
+                label: '마이 페이지',
+              ),
+            ],
+            unselectedItemColor: Colors.white,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people,),
-            label: '마이 페이지',
-          ),
-        ],
-        unselectedItemColor: Colors.white,
-      ),
+        ),
       ),
     );
+  }
+
+  void detailScreen(int movieId, userId) async {
+    var movie = await MovieProvider.getMovie(movieId);
+    Navigator.pushNamed(context, '/detailsMovieScreen', arguments: {"movie":movie, "userId":userId});
   }
 
 }

@@ -13,13 +13,14 @@ class CategoriesMovieScreen extends StatefulWidget{
 
 class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
   final needTextKeywordGroup = ["배우", "감독"];
-  final screen_name = ["randomMovieScreen", "categoriesMovieScreen", ""];
+  final screen_name = ["categorisedMovieScreen", "randomMovieScreen", "categoriesMovieScreen", ""];
   final Map<String, List<String>> group = {
     "언어":["한국어", "영어", "일본어"],
     "장르":['판타지','코미디','전쟁','음악','역사','액션','애니메이션','스릴러','서부','범죄','미스터리','모험','로맨스','드라마','다큐멘터리','공포','가족','TV' '영화','SF'],
     "개봉연도":List.generate(30, (index) => '${DateTime.now().year-index}')
   };
 
+  var expandedGroup = [];
   var selectedGroup = "";
   var selectedGroupKeyword = "";
   var currentPage = 0;
@@ -67,17 +68,35 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
     return MaterialApp(
       home: Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
+        appBar: currentMovies!.length > 0 ? AppBar(
           backgroundColor: Colors.black,
           title: Container(
-            child: const Image(
-              image: AssetImage('images/logo/logoW.png'),
-              width: 150,
-            ),
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                padding: EdgeInsets.only(bottom: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                        iconSize: 25,
+                        color: Colors.white,
+                        icon: const Icon(Icons.arrow_back_ios),
+                        tooltip: '볼거에요',
+                        onPressed: (){
+                          setState((){
+                            currentMovies = [];
+                            selectedGroup = "";
+                            selectedGroupKeyword = "";
+                            currentPage = 0;
+                          });
+                        },)
+                  ],
+                ),
+              )
           ),
           elevation: 10,
           centerTitle: false,
-        ),
+        ) : null,
         body: Container(
             color: Colors.black,
             child: selectedGroup.isNotEmpty && currentMovies!.length >= 1
@@ -162,8 +181,15 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                       color: Colors.black,
                       shadowColor: Colors.white,
                       child: ExpansionTile(
+                        onExpansionChanged: (state){
+                          setState(() {
+                            focusNode.unfocus();
+                            state ? expandedGroup.add(index): expandedGroup.remove(index);
+                            selectedGroup = "";
+                          });
+                        },
                         trailing: Icon(
-                            Icons.keyboard_arrow_right,
+                            expandedGroup.contains(index) ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right,
                             color: Colors.white,
                         ),
                         title: Padding(
@@ -237,9 +263,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                             '10', '0',
                           );
                           setState((){
-                            if(selectedGroup == '배우'){
-                              errorMessage = "배우";
-                            }
+                            errorMessage = selectedGroup;
                             currentMovies = currentMovies;
                           });
                         },
@@ -262,7 +286,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                           focusNode.requestFocus();
                         },
                         child: Container(
-                          padding: EdgeInsets.all(15),
+                          padding: EdgeInsets.all(5),
                           child: Text(
                             needTextKeywordGroup[index-group.keys.toList().length],
                             style: const TextStyle(
@@ -276,28 +300,38 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                     )
                   );
                 })),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.black,
-          onTap: (index) => {Navigator.pushNamed(context, '/${screen_name[index]}')},
-          selectedItemColor: Color.fromRGBO(179, 18, 23, 1),
-          currentIndex: 1,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.today),
-              label: '오늘의 추천',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.text_snippet),
-              label: '카테고리',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.people,
+        bottomNavigationBar: Theme(
+          data: Theme.of(context).copyWith(
+              canvasColor: Colors.black,
+              primaryColor: Colors.red,
+          ),
+          child: BottomNavigationBar(
+            backgroundColor: Colors.black,
+            onTap: (index) => {if(index!=2) Navigator.pushNamed(context, '/${screen_name[index]}')},
+            selectedItemColor: Color.fromRGBO(179, 18, 23, 1),
+            currentIndex: 2,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.today),
+                label: '오늘 뭐볼까',
               ),
-              label: '마이 페이지',
-            ),
-          ],
-          unselectedItemColor: Colors.white,
+              BottomNavigationBarItem(
+                icon: Icon(Icons.newspaper),
+                label: '새로운 영화',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.text_snippet),
+                label: '카테고리',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.people,
+                ),
+                label: '마이 페이지',
+              ),
+            ],
+            unselectedItemColor: Colors.white,
+          ),
         ),
       ),
     );

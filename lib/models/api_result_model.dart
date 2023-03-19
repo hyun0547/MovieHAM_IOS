@@ -8,7 +8,7 @@ class ApiResultModel{
         errorMessage = response['error'];
       }else{
         status = "success";
-        movieList = List<Movie>.from(response['resultList'].map((item) => Movie.fromMap(item))?.toList());
+        movieList = List<Movie>.from(response['result'].map((item) => Movie.fromMap(item))?.toList());
       }
     }
   }
@@ -20,7 +20,7 @@ class ApiResultModel{
 
 class Movie{
 
-  late String movieId;
+  late int movieId;
 
   late String adult;
   late String backdropPath;
@@ -44,7 +44,7 @@ class Movie{
 
   Movie.fromMap(Map<String, dynamic>? map) {
 
-    movieId = map?['movieId']?.toString()?? '';
+    movieId = map?['movieId']?? 0;
     adult = map?['adult']?.toString()?? '';
     backdropPath = map?['backdropPath']?.toString()?? '';
     originalLanguage = map?['originalLanguage']?.toString()?? '';

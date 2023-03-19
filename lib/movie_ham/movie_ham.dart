@@ -24,7 +24,7 @@ class _MovieHamState extends State<MovieHam> {
         routes: {
           "/randomMovieScreen": (context) => Provider(create: (context) =>Provider.of<User>,child:RandomMovieScreen()),
           "/categoriesMovieScreen": (context) => Provider(create: (context) =>Provider.of<User>,child:CategoriesMovieScreen()),
-          // "/detailsMovieScreen": (context) => Provider(create: (context) =>Provider.of<User>,child:DetailsMovieScreen()),
+          "/detailsMovieScreen": (context) => Provider(create: (context) =>Provider.of<User>,child:DetailsMovieScreen()),
         },
     );
   }
