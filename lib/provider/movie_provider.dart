@@ -12,7 +12,7 @@ class MovieProvider{
     final response = await http.
 
     post(
-      Uri.parse("http://127.0.0.1:8080/movie/notClassifiedList/${ConstantsCode.KrToCode(group)}/popularity"),
+      Uri.parse("https://movieapi.ssony.me/movie/notClassifiedList/${ConstantsCode.KrToCode(group)}/popularity"),
       body: <String, dynamic> {
         'userId': '$userId',
         'countPerPage':countPerPage,
@@ -38,7 +38,7 @@ class MovieProvider{
     final response = await http.
 
     post(
-      Uri.parse("http://127.0.0.1:8080/movie/list/${ConstantsCode.KrToCode(group)}/popularity"),
+      Uri.parse("https://movieapi.ssony.me/movie/list/${ConstantsCode.KrToCode(group)}/popularity"),
       body: <String, dynamic> {
         'countPerPage':countPerPage,
         'pageIndex':pageIndex,
@@ -62,7 +62,7 @@ class MovieProvider{
     final response = await http.
 
     get(
-      Uri.parse("http://127.0.0.1:8080/movie/$groupKeyword")
+      Uri.parse("https://movieapi.ssony.me/movie/$groupKeyword")
     );
 
     if (response.statusCode == 200) {

@@ -17,7 +17,12 @@ class RandomMovieScreen extends StatefulWidget{
 }
 
 class _RandomMovieScreenState extends State<RandomMovieScreen>{
-  final screen_name = ["categorizedMovieScreen", "randomMovieScreen", "categoriesMovieScreen", "detailsMovieScreen"];
+  final screen_name = [
+    // "categorizedMovieScreen",
+    "randomMovieScreen",
+    "categoriesMovieScreen",
+    ""
+  ];
   var _plotVisible = false;
   var user;
 
@@ -90,9 +95,10 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                                           alignment: Alignment.center,
                                           color: Color.fromRGBO(0, 0, 0, 0.5),
                                           child: Container(
-                                            margin: EdgeInsets.all(20),
+                                            padding: EdgeInsets.only(left:10, right:70),
                                             child: Text(
                                               movie.overview,
+                                              softWrap: true,
                                               style: TextStyle(
                                                 letterSpacing: 1,
                                                 wordSpacing: 1,
@@ -202,14 +208,14 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
           ),
           child: BottomNavigationBar(
             backgroundColor: Colors.black,
-            onTap: (index) => {if(index!=1) Navigator.pushNamed(context, '/${screen_name[index]}')},
+            onTap: (index) => {if(index!=0) Navigator.pushNamed(context, '/${screen_name[index]}')},
             selectedItemColor: Color.fromRGBO(179, 18, 23, 1),
-            currentIndex: 1,
+            currentIndex: 0,
             items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.today),
-                label: '오늘 뭐볼까',
-              ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(Icons.today),
+              //   label: '오늘 뭐볼까',
+              // ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.newspaper),
                 label: '새로운 영화',

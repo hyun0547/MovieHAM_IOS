@@ -13,7 +13,12 @@ class CategoriesMovieScreen extends StatefulWidget{
 
 class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
   final needTextKeywordGroup = ["배우", "감독"];
-  final screen_name = ["categorisedMovieScreen", "randomMovieScreen", "categoriesMovieScreen", ""];
+  final screen_name = [
+    // "categorisedMovieScreen",
+    "randomMovieScreen",
+    "categoriesMovieScreen",
+    ""
+  ];
   final Map<String, List<String>> group = {
     "언어":["한국어", "영어", "일본어"],
     "장르":['판타지','코미디','전쟁','음악','역사','액션','애니메이션','스릴러','서부','범죄','미스터리','모험','로맨스','드라마','다큐멘터리','공포','가족','TV' '영화','SF'],
@@ -113,6 +118,8 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                           padding: const EdgeInsets.only(
                             top: 10,
                             bottom: 15,
+                            left: 10,
+                            right: 10
                           ),
                           child: GestureDetector(
                               child: Container(
@@ -127,16 +134,20 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                                 height: 250,
                                 child: Column(children: [
                                   Expanded(
-                                    child: Container(
-                                    decoration: BoxDecoration(
-                                      image:  currentMovies![index].backdropPath.isNotEmpty? DecorationImage(
-                                        fit: BoxFit.fill,
-                                        image: NetworkImage(currentMovies![index].backdropPath),
-                                      ) : DecorationImage(
-                                        image: AssetImage('images/logo/logoW.png'),
+                                    child: GestureDetector(
+                                      onTap:(){detailScreen(currentMovies![index].movieId, user.id);},
+                                      child:Container(
+                                        decoration: BoxDecoration(
+                                          image:  currentMovies![index].backdropPath.isNotEmpty? DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: NetworkImage(currentMovies![index].backdropPath),
+                                          ) : DecorationImage(
+                                            image: AssetImage('images/logo/logoW.png'),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),),
+                                    )
+                                  ),
                                   Container(
                                     padding: EdgeInsets.only(left: 15),
                                     height: 45,
@@ -307,14 +318,14 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
           ),
           child: BottomNavigationBar(
             backgroundColor: Colors.black,
-            onTap: (index) => {if(index!=2) Navigator.pushNamed(context, '/${screen_name[index]}')},
+            onTap: (index) => {if(index!=1) Navigator.pushNamed(context, '/${screen_name[index]}')},
             selectedItemColor: Color.fromRGBO(179, 18, 23, 1),
-            currentIndex: 2,
+            currentIndex: 1,
             items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.today),
-                label: '오늘 뭐볼까',
-              ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(Icons.today),
+              //   label: '오늘 뭐볼까',
+              // ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.newspaper),
                 label: '새로운 영화',
@@ -335,6 +346,11 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
         ),
       ),
     );
+  }
+
+  void detailScreen(int movieId, userId) async {
+    var movie = await MovieProvider.getMovie(movieId);
+    Navigator.pushNamed(context, '/detailsMovieScreen', arguments: {"movie":movie, "userId":userId});
   }
 
 }

@@ -62,6 +62,10 @@ class Movie{
     }
     if(map?['peopleList'] != null){
       peopleList = List<People>.from(map?['peopleList']?.map((item) => People.fromMap(item))?.toList());
+      peopleList = peopleList.where((item)
+        => item.knownForDepartment == 'Directing' || item.knownForDepartment == 'Acting'
+      ).toList();
+      peopleList.sort((a, b)=>b.popularity.compareTo(a.popularity));
     }
   }
 }
