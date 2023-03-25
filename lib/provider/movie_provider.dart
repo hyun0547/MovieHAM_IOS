@@ -5,94 +5,87 @@ import 'package:movieham_app/constants/constants_code.dart';
 
 import '../models/api_result_model.dart';
 
-class MovieProvider{
+class MovieProvider {
+  static const String _baseUrl = 'https://movieapi.ssony.me';
 
   static Future<List<Movie>?> getNotClassifiedMovies(int userId, String group, String groupKeyword, String countPerPage, String pageIndex) async {
-    ApiResultModel apiResult;
-    final response = await http.
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/movie/notClassifiedList/${ConstantsCode.KrToCode(group)}/popularity'),
+        body: <String, dynamic>{
+          'userId': '$userId',
+          'countPerPage': countPerPage,
+          'pageIndex': pageIndex,
+          'groupKeyword': ConstantsCode.KrToCode(groupKeyword),
+        },
+      );
 
-    post(
-      Uri.parse("https://movieapi.ssony.me/movie/notClassifiedList/${ConstantsCode.KrToCode(group)}/popularity"),
-      body: <String, dynamic> {
-        'userId': '$userId',
-        'countPerPage':countPerPage,
-        'pageIndex':pageIndex,
-        'groupKeyword': ConstantsCode.KrToCode(groupKeyword)
-      },
-    );
-
-    if (response.statusCode == 200) {
-      apiResult = ApiResultModel(jsonDecode(response.body));
-      if(apiResult.status == "success") {
-        return apiResult.movieList;
-      }else{
-        return null;
+      if (response.statusCode == 200) {
+        final apiResult = ApiResultModel(jsonDecode(response.body));
+        return apiResult.status == 'success' ? apiResult.movieList : null;
       }
-    }
 
-    return null;
+      return null;
+    } catch (e) {
+      print('Error in getNotClassifiedMovies: $e');
+      return null;
+    }
   }
 
   static Future<List<Movie>?> getMovies(String group, String groupKeyword, String countPerPage, String pageIndex) async {
-    ApiResultModel apiResult;
-    final response = await http.
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/movie/list/${ConstantsCode.KrToCode(group)}/popularity'),
+        body: <String, dynamic>{
+          'countPerPage': countPerPage,
+          'pageIndex': pageIndex,
+          'groupKeyword': ConstantsCode.KrToCode(groupKeyword),
+        },
+      );
 
-    post(
-      Uri.parse("https://movieapi.ssony.me/movie/list/${ConstantsCode.KrToCode(group)}/popularity"),
-      body: <String, dynamic> {
-        'countPerPage':countPerPage,
-        'pageIndex':pageIndex,
-        'groupKeyword': ConstantsCode.KrToCode(groupKeyword)
-      },
-    );
-
-    if (response.statusCode == 200) {
-      apiResult = ApiResultModel(jsonDecode(response.body));
-      if(apiResult.status == "success") {
-        return apiResult.movieList;
-      }else{
-        return null;
+      if (response.statusCode == 200) {
+        final apiResult = ApiResultModel(jsonDecode(response.body));
+        return apiResult.status == 'success' ? apiResult.movieList : null;
       }
-    }
 
-    return null;
+      return null;
+    } catch (e) {
+      print('Error in getMovies: $e');
+      return null;
+    }
   }
 
   static Future<Movie?> getMovie(int groupKeyword) async {
-    final response = await http.
+    try {
+      final response = await http.get(Uri.parse('$_baseUrl/movie/$groupKeyword'));
 
-    get(
-      Uri.parse("https://movieapi.ssony.me/movie/$groupKeyword")
-    );
-
-    if (response.statusCode == 200) {
-      var apiResult = ApiResultModel(jsonDecode(response.body));
-      if(apiResult.status == "success") {
-        return apiResult.movieList[0];
-      }else{
-        return null;
+      if (response.statusCode == 200) {
+        final apiResult = ApiResultModel(jsonDecode(response.body));
+        return apiResult.status == 'success' ? apiResult.movieList[0] : null;
       }
-    }
 
-    return null;
+      return null;
+    } catch (e) {
+      print('Error in getMovie: $e');
+      return null;
+    }
   }
 
-  static Future<bool> insertWish(
-      {required String userId, required String movieId, required String seenYn, required String wishStatus}) async {
-    final response = await http.post(
-      Uri.parse("https://movieapi.ssony.me/wish/insert"),
-      body: <String, String> {
-        'userId': '$userId',
-        'movieId': '$movieId',
-        'seenYn': '$seenYn',
-        'wishStatus': '$wishStatus'
-      },
-    );
-    if(response.statusCode == 200){
-      return true;
-    }else{
+  static Future<bool> insertWish({required String userId, required String movieId, required String seenYn, required String wishStatus}) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/wish/insert'),
+        body: <String, String>{
+          'userId': '$userId',
+          'movieId': '$movieId',
+          'seenYn': '$seenYn',
+          'wishStatus': '$wishStatus',
+        },
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error in insertWish: $e');
       return false;
     }
   }
-
 }
