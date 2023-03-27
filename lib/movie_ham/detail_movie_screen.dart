@@ -355,7 +355,12 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                         padding: EdgeInsets.only(top: 10),
                         height: 160,
                         child: FutureBuilder(
-                          future: MovieProvider.getMovies('genre', '${movie.genreList[0].name}', '10', '0'),
+                          future: MovieProvider.getMovies(
+                              group: 'genre',
+                              groupKeyword: '${movie.genreList[0].name}',
+                              countPerPage: '10',
+                              pageIndex: '0'
+                          ),
                           builder: (BuildContext context, AsyncSnapshot snapshot) {
                             if(snapshot.hasData) {
                               List<Movie> relatedMovieList = snapshot.data;

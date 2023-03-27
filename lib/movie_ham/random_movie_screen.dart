@@ -21,7 +21,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
     // "categorizedMovieScreen",
     "randomMovieScreen",
     "categoriesMovieScreen",
-    ""
+    "myPageScreen"
   ];
   var _plotVisible = false;
   var user;
@@ -45,7 +45,13 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
           centerTitle: false,
         ),
         body: FutureBuilder(
-          future: MovieProvider.getNotClassifiedMovies(Provider.of<User>(context).id, '전체', '', '1', '0').then((value) => value![0]),
+          future: MovieProvider.getMovies(
+              userId: Provider.of<User>(context).id,
+              group: '전체',
+              groupKeyword: '',
+              countPerPage: '1',
+              pageIndex: '0').then((value) => value![0]
+          ),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData == false) {
               return CircularProgressIndicator();
@@ -177,7 +183,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                         movie.title,
                         textAlign: TextAlign.left,
                         style: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           fontFamily: 'NanumSquareEB',
                           color: Color.fromRGBO(255, 255, 255, 1),
                           fontWeight: FontWeight.bold,
@@ -187,7 +193,7 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                       Text(
                         "${List.generate(movie.genreList.length, (index) => movie.genreList[index].name)}",
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 10,
                           fontFamily: 'NanumSquareEB',
                           color: Color.fromRGBO(255, 255, 255, 1),
                           fontWeight: FontWeight.bold,

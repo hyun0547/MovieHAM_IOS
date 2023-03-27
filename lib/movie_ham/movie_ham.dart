@@ -6,6 +6,7 @@ import 'package:movieham_app/movie_ham/random_movie_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'detail_movie_screen.dart';
+import 'my_page_screen.dart';
 
 class MovieHam extends StatefulWidget {
   const MovieHam({super.key});
@@ -25,6 +26,7 @@ class _MovieHamState extends State<MovieHam> {
           "/randomMovieScreen": (context) => Provider(create: (context) =>Provider.of<User>,child:RandomMovieScreen()),
           "/categoriesMovieScreen": (context) => Provider(create: (context) =>Provider.of<User>,child:CategoriesMovieScreen()),
           "/detailsMovieScreen": (context) => Provider(create: (context) =>Provider.of<User>,child:DetailsMovieScreen()),
+          "/myPageScreen": (context) => Provider(create: (context) =>Provider.of<User>,child:MyPageScreen())
         },
     );
   }

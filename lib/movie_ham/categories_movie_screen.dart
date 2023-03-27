@@ -17,7 +17,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
     // "categorisedMovieScreen",
     "randomMovieScreen",
     "categoriesMovieScreen",
-    ""
+    "myPageScreen"
   ];
   final Map<String, List<String>> group = {
     "언어":["한국어", "영어", "일본어"],
@@ -56,7 +56,12 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
       setState((){
         scrollLoading = true;
       });
-      nextMovies = await MovieProvider.getNotClassifiedMovies(user.id, selectedGroup, selectedGroupKeyword, '10', '$currentPage');
+      nextMovies = await MovieProvider.getMovies(
+          userId: user.id,
+          group: selectedGroup,
+          groupKeyword: selectedGroupKeyword,
+          countPerPage: '10',
+          pageIndex: '$currentPage');
       setState((){
         scrollLoading = false;
         currentPage++;
@@ -103,6 +108,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
           centerTitle: false,
         ) : null,
         body: Container(
+          padding: EdgeInsets.only(left:10, right:10),
             color: Colors.black,
             child: selectedGroup.isNotEmpty && currentMovies!.length >= 1
                 ? Stack(
@@ -209,7 +215,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                             group.keys.toList()[index],
                             style: const TextStyle(
                               letterSpacing: 5,
-                              fontSize: 22,
+                              fontSize: 16,
                               color: Colors.white,
                             ),
                           ),
@@ -227,12 +233,12 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                                         scrollLoading = true;
                                       });
                                       currentMovies = (await MovieProvider
-                                          .getNotClassifiedMovies(
-                                        user.id,
-                                        '${group.keys.toList()[index]}',
-                                        '${group[group.keys.toList()[index]]![index2]}',
-                                        '10',
-                                        '$currentPage',
+                                          .getMovies(
+                                        userId: user.id,
+                                        group: '${group.keys.toList()[index]}',
+                                        groupKeyword: '${group[group.keys.toList()[index]]![index2]}',
+                                        countPerPage: '10',
+                                        pageIndex: '$currentPage',
                                       ))!;
 
                                       setState(() {
@@ -247,7 +253,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                                       group[group.keys.toList()[index]]![index2],
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(
-                                        fontSize: 22,
+                                        fontSize: 16,
                                         color: Colors.white,
                                       ),
                                     ),
@@ -269,9 +275,12 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                         autocorrect:false,
                         autofocus:false,
                         onSubmitted:(keyword) async {
-                          currentMovies = await MovieProvider.getNotClassifiedMovies(
-                            user.id, needTextKeywordGroup[index-group.keys.toList().length], keyword,
-                            '10', '0',
+                          currentMovies = await MovieProvider.getMovies(
+                            userId: user.id,
+                            group: needTextKeywordGroup[index-group.keys.toList().length],
+                            groupKeyword: keyword,
+                            countPerPage: '10',
+                            pageIndex: '0',
                           );
                           setState((){
                             errorMessage = selectedGroup;
@@ -302,7 +311,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen>{
                             needTextKeywordGroup[index-group.keys.toList().length],
                             style: const TextStyle(
                               letterSpacing: 5,
-                              fontSize: 22,
+                              fontSize: 16,
                               color: Colors.white,
                             ),
                           ),
