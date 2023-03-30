@@ -54,7 +54,11 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
           ),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData == false) {
-              return CircularProgressIndicator();
+              return Container(
+                color: Colors.black,
+                alignment: Alignment.center,
+                child: CircularProgressIndicator(),
+              );
             }
             else{
               var movie = snapshot.data as Movie;

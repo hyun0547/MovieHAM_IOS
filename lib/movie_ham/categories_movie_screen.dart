@@ -132,6 +132,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
                 backgroundColor: Colors.black,
                 title: Container(
                 child: CustomCheckBoxGroup(
+                  margin: EdgeInsets.only(left:15, right:15,),
                   buttonTextStyle: ButtonTextStyle(
                     selectedColor: Colors.white,
                     unSelectedColor: Colors.white,
