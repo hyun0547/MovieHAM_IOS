@@ -36,6 +36,8 @@ dependencies:
   kakao_flutter_sdk_share: ^1.4.1 # 카카오톡 공유
   flutter_secure_storage : ^5.0.2 # flutter_secure_storage 관련 패키지
   provider: ^6.0.2
+  custom_radio_grouped_button: any
+
 
 
   # The following adds the Cupertino Icons font to your application.

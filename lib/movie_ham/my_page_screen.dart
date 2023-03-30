@@ -28,14 +28,96 @@ class _MyPageScreen extends State<MyPageScreen>{
           elevation: 10,
           centerTitle: false,
         ),
-        body: ListTile(
-          title: Text(
-            "마이페이지",
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-            ),
+        body: Container(
+          padding:EdgeInsets.only(left: 15, right: 15),
+          color:Colors.black,
+          child: Column(
+            children: [
+              Container(
+                child: Column(
+                  children: [
+                    Card(
+                      shape: Border(
+                        bottom: BorderSide(color: Colors.white, width: 1),
+                      ),
+                      color: Colors.black,
+                      shadowColor: Colors.white,
+                      child: ExpansionTile(
+                        title: Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text(
+                            "test",
+                            style: const TextStyle(
+                              letterSpacing: 5,
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        children: <Widget>[
+                          SizedBox(
+                            child: ListView.builder(
+                                itemCount:
+                                10,
+                                itemBuilder: (context, index2) {
+                                  return ListTile(
+                                    title: Text(
+                                      "test",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  );
+                                }),
+                          )
+                        ],
+                      ),
+                    ),
+                    Card(
+                      shape: Border(
+                        bottom: BorderSide(color: Colors.white, width: 1),
+                      ),
+                      color: Colors.black,
+                      shadowColor: Colors.white,
+                      child: ExpansionTile(
+                        title: Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text(
+                            "test",
+                            style: const TextStyle(
+                              letterSpacing: 5,
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        children: <Widget>[
+                          SizedBox(
+                            child: ListView.builder(
+                                itemCount:
+                                10,
+                                itemBuilder: (context, index2) {
+                                  return ListTile(
+                                    title: Text(
+                                      "test",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  );
+                                }),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
           bottomNavigationBar: Theme(
