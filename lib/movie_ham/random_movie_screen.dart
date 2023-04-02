@@ -50,7 +50,9 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
               group: '전체',
               groupKeyword: '',
               countPerPage: '1',
-              pageIndex: '0').then((value) => value![0]
+              pageIndex: '0',
+              classifiedYn: "N"
+          ).then((value) => value![0]
           ),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData == false) {

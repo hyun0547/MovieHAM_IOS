@@ -359,7 +359,7 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                               group: 'genre',
                               groupKeyword: '${movie.genreList[0].name}',
                               countPerPage: '10',
-                              pageIndex: '0'
+                              pageIndex: '0',
                           ),
                           builder: (BuildContext context, AsyncSnapshot snapshot) {
                             if(snapshot.hasData) {

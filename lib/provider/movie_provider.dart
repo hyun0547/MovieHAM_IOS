@@ -6,22 +6,29 @@ import 'package:movieham_app/constants/constants_code.dart';
 import '../models/api_result_model.dart';
 
 class MovieProvider {
-  static const String _baseUrl = 'https://movieapi.ssony.me';
+  static const String _baseUrl = 'http://127.0.0.1:8080';
 
   static Future<List<Movie>?> getMovies(
       {int? userId,
+      String? classifiedYn,
       required String group,
       required String groupKeyword,
       required String countPerPage,
-      required String pageIndex}) async {
+      required String pageIndex
+      }) async {
     try {
       final response = await http.post(
+        headers:{"Content-Type": "application/json"},
         Uri.parse('$_baseUrl/movie/list/${ConstantsCode.KrToCode(group)}/popularity'),
-        body: <String, dynamic>{
-          'countPerPage': countPerPage,
-          'pageIndex': pageIndex,
-          'groupKeyword': ConstantsCode.KrToCode(groupKeyword),
-        },
+        body: json.encode(
+            {
+              'countPerPage': countPerPage,
+              'pageIndex': pageIndex,
+              'groupKeyword': ConstantsCode.KrToCode(groupKeyword),
+              'userId' : userId,
+              'classifiedYn' : classifiedYn,
+            }
+        ),
       );
 
       if (response.statusCode == 200) {
@@ -36,9 +43,9 @@ class MovieProvider {
     }
   }
 
-  static Future<Movie?> getMovie(int groupKeyword) async {
+  static Future<Movie?> getMovie(int movieId) async {
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/movie/$groupKeyword'));
+      final response = await http.post(Uri.parse('$_baseUrl/movie/$movieId'));
 
       if (response.statusCode == 200) {
         final apiResult = ApiResultModel(jsonDecode(response.body));

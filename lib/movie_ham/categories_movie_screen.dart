@@ -49,6 +49,8 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
   var expandedGroup = [];
   var selectedGroup = "";
   var selectedGroupKeyword = "";
+  late String selectedClassifiedYn = "";
+
   var currentPage = 0;
   late List<Movie>? currentMovies = [];
   late List<Movie>? nextMovies = [];
@@ -82,7 +84,9 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
           group: selectedGroup,
           groupKeyword: selectedGroupKeyword,
           countPerPage: '10',
-          pageIndex: '$currentPage');
+          pageIndex: '$currentPage',
+          classifiedYn: selectedClassifiedYn
+      );
       setState(() {
         scrollLoading = false;
         currentPage++;
@@ -119,6 +123,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
                                 selectedGroup = "";
                                 selectedGroupKeyword = "";
                                 currentPage = 0;
+                                expandedGroup = [];
                               });
                             },
                           )
@@ -140,13 +145,14 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
                   enableShape: true,
                   shapeRadius: 100,
                   horizontal: false,
-                  buttonLables: [
+                  defaultSelected: selectedClassifiedYn ==  "A" ? ["N", "Y"]:[selectedClassifiedYn],
+                  buttonLables: <String>[
                     "새로운 영화",
                     "나의 무비함",
                   ],
-                  buttonValuesList: [
-                    "new",
-                    "classified",
+                  buttonValuesList: <String>[
+                    "N",
+                    "Y",
                   ],
                   width: 120,
                   selectedBorderColor: Color.fromRGBO(179, 18, 23, 1),
@@ -154,7 +160,18 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
                   selectedColor: Color.fromRGBO(179, 18, 23, 1),
                   unSelectedColor: Colors.black,
                   padding: 5,
-                  checkBoxButtonValues: (List<dynamic> test ) { print(test); },
+                  checkBoxButtonValues: (List<dynamic> selectedValues )
+                  {
+                      setState((){
+                        if(selectedValues.length == 0){
+                          selectedClassifiedYn = "";
+                        } else if(selectedValues.length >= 2){
+                          selectedClassifiedYn = "A";
+                        }else{
+                          selectedClassifiedYn = selectedValues[0].toString();
+                        }
+                      });
+                  },
                 )
           ),
         ),
@@ -308,6 +325,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
                                                 groupKeyword: '${group[group.keys.toList()[index]]![index2]}',
                                                 countPerPage: '10',
                                                 pageIndex: '$currentPage',
+                                                classifiedYn: selectedClassifiedYn
                                               ))!;
 
                                               setState(() {
@@ -361,6 +379,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
                                                 groupKeyword: keyword,
                                                 countPerPage: '10',
                                                 pageIndex: '0',
+                                                classifiedYn: selectedClassifiedYn
                                               );
                                               setState(() {
                                                 errorMessage = selectedGroup;
