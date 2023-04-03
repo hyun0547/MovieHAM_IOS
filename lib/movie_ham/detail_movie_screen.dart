@@ -17,6 +17,7 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
   Widget build(BuildContext context) {
     var arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     Movie movie = arguments["movie"];
+    Wish? wish = arguments["wish"];
     int userId = arguments["userId"];
     return MaterialApp(
         home: Scaffold(
@@ -70,41 +71,42 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                                           iconSize: 25,
                                           color: Colors.white,
                                           icon: const Icon(Icons.arrow_back_ios),
-                                          tooltip: '볼거에요',
+                                          tooltip: '돌아가기',
                                           onPressed: () => Navigator.of(context).pop()),
                                       Container(child: Row(
                                        children: [
-                                         if(true)
+                                         if(wish != null)
                                          IconButton(
                                              iconSize: 25,
                                              color: Colors.white,
                                              icon: const Icon(Icons.delete),
-                                             tooltip: '볼거에요',
+                                             tooltip: '삭제',
                                              onPressed: () async {
-                                               await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "W");
-                                               showDialog<String>(
-                                                 context: context,
-                                                 builder: (BuildContext context) => AlertDialog(
-                                                   content: const Text('위시 리스트에 저장 되었습니다.'),
-                                                 ),
-                                               );
+                                               // await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "W");
+                                               // showDialog<String>(
+                                               //   context: context,
+                                               //   builder: (BuildContext context) => AlertDialog(
+                                               //     content: const Text('위시 리스트에 저장 되었습니다.'),
+                                               //   ),
+                                               // );
                                              }),
-                                         if(true)
+                                         if(wish != null)
                                          IconButton(
                                              iconSize: 25,
                                              color: Colors.white,
-                                             icon: const Icon(true?Icons.circle_outlined:Icons.circle),
-                                             tooltip: '볼거에요',
+                                             icon: Icon(wish.seenYn == "Y"?Icons.circle:Icons.circle_outlined),
+                                             tooltip: wish.seenYn == "Y"?'봤어요':'안봤어요',
                                              onPressed: () async {
-                                               await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "W");
+                                               await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie.movieId}', seenYn:wish.seenYn=="Y"?"N":"Y", wishStatus: "W");
                                                showDialog<String>(
                                                  context: context,
                                                  builder: (BuildContext context) => AlertDialog(
                                                    content: const Text('위시 리스트에 저장 되었습니다.'),
                                                  ),
                                                );
+                                               setState(() {});
                                              }),
-                                         if(false)
+                                         if(wish == null)
                                          IconButton(
                                              iconSize: 25,
                                              color: Colors.white,
@@ -118,6 +120,7 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                                                    content: const Text('위시 리스트에 저장 되었습니다.'),
                                                  ),
                                                );
+                                               setState(() {});
                                              }),
                                          IconButton(
                                              iconSize: 25,

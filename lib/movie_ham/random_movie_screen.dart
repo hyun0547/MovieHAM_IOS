@@ -252,7 +252,8 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
 
   void detailScreen(int movieId, userId) async {
     var movie = await MovieProvider.getMovie(movieId);
-    Navigator.pushNamed(context, '/detailsMovieScreen', arguments: {"movie":movie, "userId":userId});
+    var wish = await MovieProvider.getWish(movieId:movieId, userId:userId);
+    Navigator.pushNamed(context, '/detailsMovieScreen', arguments: {"movie":movie, "userId":userId, "wish":wish});
   }
 
 }

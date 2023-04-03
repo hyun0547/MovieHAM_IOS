@@ -1,7 +1,12 @@
 import 'dart:convert';
 
-class ApiResultModel{
-  ApiResultModel(Map<String,dynamic>? response){
+class MovieResult{
+
+  late String status;
+  late List<Movie> movieList;
+  late String errorMessage;
+
+  MovieResult(Map<String,dynamic>? response){
     if(response != null){
       if(response["error"] != null){
         status = "error";
@@ -12,10 +17,6 @@ class ApiResultModel{
       }
     }
   }
-
-  late String status;
-  late List<Movie> movieList;
-  late String errorMessage;
 }
 
 class Movie{
@@ -104,4 +105,47 @@ class People {
     profilePath = map?['profilePath']?? '';
     job = map?['job']?? '';
   }
+}
+
+
+class WishResult{
+  late String status;
+  late List<Wish> wishList;
+  late String errorMessage;
+
+  WishResult(Map<String,dynamic>? response){
+    if(response != null){
+      if(response["error"] != null){
+        status = "error";
+        errorMessage = response['error'];
+      }else{
+        status = "success";
+        wishList = List<Wish>.from(response['result'].map((item) => Wish.fromMap(item))?.toList());
+      }
+    }
+  }
+}
+
+class Wish {
+
+  late int userId;
+  late int movieId;
+  late String rating;
+  late String regDate;
+  late String modDate;
+  late String review;
+  late String seenYn;
+  late String wishStatus;
+
+  Wish.fromMap(Map<String, dynamic>? map){
+    userId = map?['userId']??'';
+    movieId = map?['movieId']??'';
+    rating = map?['rating']??'';
+    regDate = map?['regDate']??'';
+    modDate = map?['modDate']??'';
+    review = map?['review']??'';
+    seenYn = map?['seenYn']??'';
+    wishStatus = map?['wishStatus']??'';
+  }
+
 }

@@ -32,7 +32,7 @@ class MovieProvider {
       );
 
       if (response.statusCode == 200) {
-        final apiResult = ApiResultModel(jsonDecode(response.body));
+        final apiResult = MovieResult(jsonDecode(response.body));
         return apiResult.status == 'success' ? apiResult.movieList : null;
       }
 
@@ -48,7 +48,7 @@ class MovieProvider {
       final response = await http.post(Uri.parse('$_baseUrl/movie/$movieId'));
 
       if (response.statusCode == 200) {
-        final apiResult = ApiResultModel(jsonDecode(response.body));
+        final apiResult = MovieResult(jsonDecode(response.body));
         return apiResult.status == 'success' ? apiResult.movieList[0] : null;
       }
 
@@ -74,6 +74,21 @@ class MovieProvider {
     } catch (e) {
       print('Error in insertWish: $e');
       return false;
+    }
+  }
+
+  static Future<Wish?> getWish({required int userId, required int movieId}) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/wish/view/$userId/$movieId'),
+      );
+      if(response.statusCode == 200){
+        final apiResult = WishResult(jsonDecode(response.body));
+        return apiResult.status == 'success'?apiResult.wishList[0]:null;
+      }
+    } catch (e) {
+      print('Error in getWish: $e');
+      return null;
     }
   }
 }
