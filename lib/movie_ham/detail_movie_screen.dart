@@ -74,18 +74,56 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                                           onPressed: () => Navigator.of(context).pop()),
                                       Container(child: Row(
                                        children: [
+                                         if(true)
+                                         IconButton(
+                                             iconSize: 25,
+                                             color: Colors.white,
+                                             icon: const Icon(Icons.delete),
+                                             tooltip: '볼거에요',
+                                             onPressed: () async {
+                                               await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "W");
+                                               showDialog<String>(
+                                                 context: context,
+                                                 builder: (BuildContext context) => AlertDialog(
+                                                   content: const Text('위시 리스트에 저장 되었습니다.'),
+                                                 ),
+                                               );
+                                             }),
+                                         if(true)
+                                         IconButton(
+                                             iconSize: 25,
+                                             color: Colors.white,
+                                             icon: const Icon(true?Icons.circle_outlined:Icons.circle),
+                                             tooltip: '볼거에요',
+                                             onPressed: () async {
+                                               await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "W");
+                                               showDialog<String>(
+                                                 context: context,
+                                                 builder: (BuildContext context) => AlertDialog(
+                                                   content: const Text('위시 리스트에 저장 되었습니다.'),
+                                                 ),
+                                               );
+                                             }),
+                                         if(false)
                                          IconButton(
                                              iconSize: 25,
                                              color: Colors.white,
                                              icon: const Icon(Icons.add),
                                              tooltip: '볼거에요',
                                              onPressed: () async {
+                                               await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "W");
+                                               showDialog<String>(
+                                                 context: context,
+                                                 builder: (BuildContext context) => AlertDialog(
+                                                   content: const Text('위시 리스트에 저장 되었습니다.'),
+                                                 ),
+                                               );
                                              }),
                                          IconButton(
                                              iconSize: 25,
                                              color: Colors.white,
                                              icon: const Icon(Icons.share),
-                                             tooltip: '볼거에요',
+                                             tooltip: '공유하기',
                                              onPressed: () async {
                                              }),
                                        ],

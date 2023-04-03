@@ -6,7 +6,7 @@ import 'package:movieham_app/constants/constants_code.dart';
 import '../models/api_result_model.dart';
 
 class MovieProvider {
-  static const String _baseUrl = 'http://127.0.0.1:8080';
+  static const String _baseUrl = 'https://movieapi.ssony.me';
 
   static Future<List<Movie>?> getMovies(
       {int? userId,
