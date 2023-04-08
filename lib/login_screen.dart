@@ -22,7 +22,6 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () async {
-                      print("test");
                       await viewModel.login();
                       storage.write(key: "user", value: jsonEncode(viewModel.user));
                     },

@@ -112,6 +112,7 @@ class WishResult{
   late String status;
   late List<Wish> wishList;
   late String errorMessage;
+  late Wish wish;
 
   WishResult(Map<String,dynamic>? response){
     if(response != null){
@@ -120,7 +121,7 @@ class WishResult{
         errorMessage = response['error'];
       }else{
         status = "success";
-        wishList = List<Wish>.from(response['result'].map((item) => Wish.fromMap(item))?.toList());
+        wish = Wish.fromMap(response['result']);
       }
     }
   }

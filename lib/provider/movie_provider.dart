@@ -6,7 +6,7 @@ import 'package:movieham_app/constants/constants_code.dart';
 import '../models/api_result_model.dart';
 
 class MovieProvider {
-  static const String _baseUrl = 'https://movieapi.ssony.me';
+  static const String _baseUrl = 'http://127.0.0.1:8080';
 
   static Future<List<Movie>?> getMovies(
       {int? userId,
@@ -83,12 +83,16 @@ class MovieProvider {
         Uri.parse('$_baseUrl/wish/view/$userId/$movieId'),
       );
       if(response.statusCode == 200){
-        final apiResult = WishResult(jsonDecode(response.body));
-        return apiResult.status == 'success'?apiResult.wishList[0]:null;
+        if(jsonDecode(response.body)['result'] != null){
+          final apiResult = WishResult(jsonDecode(response.body));
+          return apiResult.status == 'success'?apiResult.wish:null;
+        }
+        return null;
       }
     } catch (e) {
       print('Error in getWish: $e');
       return null;
     }
+    return null;
   }
 }

@@ -151,28 +151,19 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
                                 IconButton(
                                     iconSize: 50,
                                     color: Colors.white,
-                                    icon: const Icon(Icons.thumb_down),
-                                    tooltip: '안볼거에요',
-                                    onPressed: () async {
-                                      await MovieProvider.insertWish(userId:'${user.id}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "N");
-                                      setState(() {});
-                                    }),
-                                IconButton(
-                                    iconSize: 50,
-                                    color: Colors.white,
-                                    icon: const Icon(Icons.next_plan),
-                                    tooltip: '모르겠어요',
-                                    onPressed: () async {
-                                      await MovieProvider.insertWish(userId:'${user.id}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "D");
-                                      setState(() {});
-                                    }),
-                                IconButton(
-                                    iconSize: 50,
-                                    color: Colors.white,
-                                    icon: const Icon(Icons.add_chart),
+                                    icon: const Icon(Icons.remove_red_eye),
                                     tooltip: '이미 봤어요',
                                     onPressed: () async {
                                       await MovieProvider.insertWish(userId:'${user.id}', movieId:'${movie.movieId}', seenYn:"Y", wishStatus: "Y");
+                                      setState(() {});
+                                    }),
+                                IconButton(
+                                    iconSize: 50,
+                                    color: Colors.white,
+                                    icon: const Icon(Icons.arrow_forward_outlined),
+                                    tooltip: '다음',
+                                    onPressed: () async {
+                                      await MovieProvider.insertWish(userId:'${user.id}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "N");
                                       setState(() {});
                                     }),
                               ],
@@ -253,7 +244,9 @@ class _RandomMovieScreenState extends State<RandomMovieScreen>{
   void detailScreen(int movieId, userId) async {
     var movie = await MovieProvider.getMovie(movieId);
     var wish = await MovieProvider.getWish(movieId:movieId, userId:userId);
-    Navigator.pushNamed(context, '/detailsMovieScreen', arguments: {"movie":movie, "userId":userId, "wish":wish});
+    Navigator.pushNamed(context, '/detailsMovieScreen', arguments: {"movie":movie, "userId":userId, "wish":wish}).then((value){
+      setState(() {});
+    });
   }
 
 }

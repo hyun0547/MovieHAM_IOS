@@ -55,7 +55,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
   late List<Movie>? currentMovies = [];
   late List<Movie>? nextMovies = [];
   final ScrollController _controller = ScrollController();
-  var scrollLoading = false;
+  var movieLoading = false;
   late FocusNode focusNode = FocusNode();
   late var errorMessage = null;
 
@@ -64,34 +64,53 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
   @override
   void initState() {
     super.initState();
-    _controller.addListener(_scrollListener);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   _scrollListener() async {
     if (_controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
+      if(await loadNewMovies()){
+      }else{
+        _controller.removeListener(_scrollListener);
+      }
+    }
+  }
+  
+  initMovies(){
+    _controller.addListener(_scrollListener);
+    setState(() {
+      currentMovies = [];
+      selectedGroup = "";
+      selectedGroupKeyword = "";
+      currentPage = 0;
+      expandedGroup = [];
+    });
+  }
+
+  Future<bool> loadNewMovies() async {
+    setState(() {
+      movieLoading = true;
+    });
+    nextMovies = await MovieProvider.getMovies(
+        userId: user.id,
+        group: selectedGroup,
+        groupKeyword: selectedGroupKeyword,
+        countPerPage: '10',
+        pageIndex: '${currentPage}',
+        classifiedYn: selectedClassifiedYn
+    );
+    if(nextMovies != null && nextMovies!.isNotEmpty){
       setState(() {
-        scrollLoading = true;
-      });
-      nextMovies = await MovieProvider.getMovies(
-          userId: user.id,
-          group: selectedGroup,
-          groupKeyword: selectedGroupKeyword,
-          countPerPage: '10',
-          pageIndex: '$currentPage',
-          classifiedYn: selectedClassifiedYn
-      );
-      setState(() {
-        scrollLoading = false;
-        currentPage++;
+        movieLoading = false;
         currentMovies!.addAll(nextMovies!);
+        currentPage++;
       });
+      return true;
+    }else{
+      setState(() {
+        movieLoading = false;
+      });
+      return false;
     }
   }
 
@@ -118,13 +137,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
                             color: Colors.white,
                             icon: const Icon(Icons.arrow_back_ios),
                             onPressed: () {
-                              setState(() {
-                                currentMovies = [];
-                                selectedGroup = "";
-                                selectedGroupKeyword = "";
-                                currentPage = 0;
-                                expandedGroup = [];
-                              });
+                              initMovies();
                             },
                           )
                         ],
@@ -209,8 +222,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
                                                 child: GestureDetector(
                                               onTap: () {
                                                 detailScreen(
-                                                    currentMovies![index]
-                                                        .movieId,
+                                                    currentMovies![index].movieId,
                                                     user.id);
                                               },
                                               child: Container(
@@ -249,7 +261,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
                               );
                             }),
                       ),
-                      scrollLoading
+                      movieLoading
                           ? Positioned(
                               bottom: 5,
                               left: MediaQuery.of(context).size.width / 2 - 28,
@@ -310,38 +322,29 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
                                     height: 250 < (group[group.keys.toList()[index]]?.length.toDouble())! * 60 ? 250 : (group[group.keys.toList()[index]]?.length.toDouble())! * 60,
                                     child: ListView.builder(
                                         itemCount:
-                                            group[group.keys.toList()[index]]
-                                                ?.length,
+                                            group[group.keys.toList()[index]]?.length,
                                         itemBuilder: (context, index2) {
                                           return ListTile(
                                             onTap: () async {
-                                              setState(() {
-                                                scrollLoading = true;
+                                              setState((){
+                                                selectedGroup = '${group.keys.toList()[index]}';
+                                                selectedGroupKeyword = '${group[group.keys.toList()[index]]![index2]}';
                                               });
-                                              currentMovies =
-                                                  (await MovieProvider.getMovies(
-                                                userId: user.id,
-                                                group: '${group.keys.toList()[index]}',
-                                                groupKeyword: '${group[group.keys.toList()[index]]![index2]}',
-                                                countPerPage: '10',
-                                                pageIndex: '$currentPage',
-                                                classifiedYn: selectedClassifiedYn
-                                              ))!;
 
-                                              setState(() {
-                                                scrollLoading = false;
-                                                currentMovies = currentMovies;
-                                                selectedGroup =
-                                                    group.keys.toList()[index];
-                                                selectedGroupKeyword = group[
-                                                    group.keys.toList()[
-                                                        index]]![index2];
-                                                currentPage++;
-                                              });
+                                              bool moviesLoaded = await loadNewMovies();
+
+                                              if(moviesLoaded){
+                                              }else{
+                                                showDialog<String>(
+                                                  context: context,
+                                                  builder: (BuildContext context) => AlertDialog(
+                                                    content: const Text('영화가 없습니다.'),
+                                                  ),
+                                                );
+                                              }
                                             },
                                             title: Text(
-                                              group[group.keys
-                                                  .toList()[index]]![index2],
+                                              group[group.keys.toList()[index]]![index2],
                                               textAlign: TextAlign.center,
                                               style: const TextStyle(
                                                 fontSize: 16,
@@ -364,27 +367,26 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
                                     ),
                                     color: Colors.black,
                                     shadowColor: Colors.white,
-                                    child: needTextKeywordGroup[index -
-                                                group.keys.toList().length] ==
-                                            selectedGroup
+                                    child: needTextKeywordGroup[index - group.keys.toList().length] == selectedGroup
                                         ? TextField(
                                             cursorHeight: 25,
                                             autocorrect: false,
                                             autofocus: false,
                                             onSubmitted: (keyword) async {
-                                              currentMovies =
-                                                  await MovieProvider.getMovies(
-                                                userId: user.id,
-                                                group: needTextKeywordGroup[index - group.keys.toList().length],
-                                                groupKeyword: keyword,
-                                                countPerPage: '10',
-                                                pageIndex: '0',
-                                                classifiedYn: selectedClassifiedYn
-                                              );
                                               setState(() {
-                                                errorMessage = selectedGroup;
-                                                currentMovies = currentMovies;
+                                                selectedGroupKeyword = keyword;
+                                                selectedGroup = needTextKeywordGroup[index - group.keys.toList().length];
                                               });
+                                              bool moviesLoaded = await loadNewMovies();
+                                              if(moviesLoaded){
+                                              }else{
+                                                showDialog<String>(
+                                                  context: context,
+                                                  builder: (BuildContext context) => AlertDialog(
+                                                    content: const Text('영화가 없습니다.'),
+                                                  ),
+                                                );
+                                              }
                                             },
                                             focusNode: focusNode,
                                             style: TextStyle(
@@ -399,11 +401,7 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
                                             title: GestureDetector(
                                             onTap: () {
                                               setState(() {
-                                                selectedGroup =
-                                                    needTextKeywordGroup[index -
-                                                        group.keys
-                                                            .toList()
-                                                            .length];
+                                                selectedGroup = needTextKeywordGroup[index - group.keys.toList().length];
                                               });
                                               focusNode.requestFocus();
                                             },
@@ -466,7 +464,9 @@ class _CategoriesMovieScreen extends State<CategoriesMovieScreen> {
 
   void detailScreen(int movieId, userId) async {
     var movie = await MovieProvider.getMovie(movieId);
-    Navigator.pushNamed(context, '/detailsMovieScreen',
-        arguments: {"movie": movie, "userId": userId});
+    var wish = await MovieProvider.getWish(movieId:movieId, userId:userId);
+    Navigator.pushNamed(context, '/detailsMovieScreen', arguments: {"movie":movie, "userId":userId, "wish":wish}).then((value){
+      setState(() {});
+    });
   }
 }

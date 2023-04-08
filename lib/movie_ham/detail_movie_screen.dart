@@ -13,12 +13,18 @@ class DetailsMovieScreen extends StatefulWidget{
 }
 
 class _DetailsMovieScreen extends State<DetailsMovieScreen>{
+  Movie? movie;
+  Wish? wish;
+  int? userId;
+
   @override
   Widget build(BuildContext context) {
     var arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    Movie movie = arguments["movie"];
-    Wish? wish = arguments["wish"];
-    int userId = arguments["userId"];
+    setState((){
+      movie = movie??arguments["movie"];
+      wish = wish??arguments["wish"];
+      userId = userId??arguments["userId"];
+    });
     return MaterialApp(
         home: Scaffold(
           backgroundColor: Colors.black,
@@ -36,7 +42,7 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                         opacity: 0.4,
                         fit: BoxFit.cover,
                         image: NetworkImage(
-                            movie.backdropPath
+                            movie!.backdropPath
                         ),
                       ),
                     ),
@@ -75,45 +81,56 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                                           onPressed: () => Navigator.of(context).pop()),
                                       Container(child: Row(
                                        children: [
-                                         if(wish != null)
+                                         if(wish != null && wish?.wishStatus != "N")
                                          IconButton(
                                              iconSize: 25,
                                              color: Colors.white,
                                              icon: const Icon(Icons.delete),
                                              tooltip: '삭제',
                                              onPressed: () async {
-                                               // await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "W");
-                                               // showDialog<String>(
-                                               //   context: context,
-                                               //   builder: (BuildContext context) => AlertDialog(
-                                               //     content: const Text('위시 리스트에 저장 되었습니다.'),
-                                               //   ),
-                                               // );
-                                             }),
-                                         if(wish != null)
-                                         IconButton(
-                                             iconSize: 25,
-                                             color: Colors.white,
-                                             icon: Icon(wish.seenYn == "Y"?Icons.circle:Icons.circle_outlined),
-                                             tooltip: wish.seenYn == "Y"?'봤어요':'안봤어요',
-                                             onPressed: () async {
-                                               await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie.movieId}', seenYn:wish.seenYn=="Y"?"N":"Y", wishStatus: "W");
+                                               await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie!.movieId}', seenYn:"N", wishStatus: "N");
+                                               Wish? tmp = await MovieProvider.getWish(userId: userId!, movieId: movie!.movieId);
+                                               if(tmp != null){
+                                                 setState(() {
+                                                   wish = tmp;
+                                                 });
+                                               }
                                                showDialog<String>(
                                                  context: context,
                                                  builder: (BuildContext context) => AlertDialog(
-                                                   content: const Text('위시 리스트에 저장 되었습니다.'),
+                                                   content: const Text('위시 리스트에서 삭제했습니다.'),
                                                  ),
                                                );
-                                               setState(() {});
                                              }),
-                                         if(wish == null)
+                                         if(wish != null && wish?.wishStatus != "N")
+                                         IconButton(
+                                             iconSize: 25,
+                                             color: Colors.white,
+                                             icon: Icon(wish!.seenYn == "Y"?Icons.remove_red_eye:Icons.remove_red_eye_outlined),
+                                             tooltip: wish!.seenYn == "Y"?'봤어요':'안봤어요',
+                                             onPressed: () async {
+                                               await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie!.movieId}', seenYn:wish!.seenYn=="Y"?"N":"Y", wishStatus: "W");
+                                               Wish? tmp = await MovieProvider.getWish(userId: userId!, movieId: movie!.movieId);
+                                               if(tmp != null){
+                                                 setState(() {
+                                                   wish = tmp;
+                                                 });
+                                               }
+                                             }),
+                                         if(wish == null || wish?.wishStatus == "N")
                                          IconButton(
                                              iconSize: 25,
                                              color: Colors.white,
                                              icon: const Icon(Icons.add),
                                              tooltip: '볼거에요',
                                              onPressed: () async {
-                                               await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie.movieId}', seenYn:"N", wishStatus: "W");
+                                               await MovieProvider.insertWish(userId:'${userId}', movieId:'${movie!.movieId}', seenYn:"N", wishStatus: "W");
+                                               Wish? tmp = await MovieProvider.getWish(userId: userId!, movieId: movie!.movieId);
+                                               if(tmp != null){
+                                                 setState(() {
+                                                   wish = tmp;
+                                                 });
+                                               }
                                                showDialog<String>(
                                                  context: context,
                                                  builder: (BuildContext context) => AlertDialog(
@@ -149,7 +166,7 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                                     image: DecorationImage(
                                       fit: BoxFit.fill,
                                       image: NetworkImage(
-                                          movie.posterPath
+                                          movie!.posterPath
                                       ),
                                     ),
                                   ),
@@ -163,7 +180,7 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                                           children: [
                                             Container(
                                               child:Text(
-                                                movie.title,
+                                                movie!.title,
                                                 softWrap: true,
                                                 style: TextStyle(
                                                     fontSize: 18,
@@ -175,7 +192,7 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                                             SizedBox(width: 5,),
                                             Container(
                                               child: Text(
-                                                "(${movie.originalTitle})",
+                                                "(${movie!.originalTitle})",
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.w400,
                                                     fontSize: 10,
@@ -212,8 +229,8 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                                               Row(children:
                                               List.generate(
                                                 5,
-                                                    (index) => Icon((double.parse(movie.voteAverage)/2).floor() > index ? Icons.star
-                                                      : ((double.parse(movie.voteAverage)/2).floor() == index ? ((double.parse(movie.voteAverage)/2) < (double.parse(movie.voteAverage)/2).round() ? Icons.star_half : Icons.star_border) : Icons.star_border),
+                                                    (index) => Icon((double.parse(movie!.voteAverage)/2).floor() > index ? Icons.star
+                                                      : ((double.parse(movie!.voteAverage)/2).floor() == index ? ((double.parse(movie!.voteAverage)/2) < (double.parse(movie!.voteAverage)/2).round() ? Icons.star_half : Icons.star_border) : Icons.star_border),
                                                   color:Colors.red,
                                                   size: 16,
                                                 ),
@@ -222,7 +239,7 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                                               , Container(
                                                 padding: EdgeInsets.only(left:5),
                                                 child: Text(
-                                                  "${double.parse(movie.voteAverage)/2}",
+                                                  "${double.parse(movie!.voteAverage)/2}",
                                                   style: TextStyle(
                                                       fontWeight: FontWeight.w400,
                                                       fontSize: 10,
@@ -236,7 +253,7 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                                         SizedBox(height: 5,),
                                         Container(
                                           child:Text(
-                                            movie.releaseDate.replaceAll("-", " / "),
+                                            movie!.releaseDate.replaceAll("-", " / "),
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w400,
                                                 fontSize: 10,
@@ -246,9 +263,9 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                                         ),
                                         SizedBox(height: 5,),
                                         Row(
-                                          children: List.generate(movie.genreList.length, (index) =>
+                                          children: List.generate(movie!.genreList.length, (index) =>
                                               Text(
-                                                  (index>0&&index<movie.genreList.length?" / ":"")+movie.genreList[index].name,
+                                                  (index>0&&index<movie!.genreList.length?" / ":"")+movie!.genreList[index].name,
                                                   style: TextStyle(
                                                       fontWeight: FontWeight.w400,
                                                       fontSize: 10,
@@ -288,7 +305,7 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                       Container(
                         padding: EdgeInsets.only(top: 10),
                         child: Text(
-                          movie.overview,
+                          movie!.overview,
                           style: TextStyle(
                               fontWeight: FontWeight.w400,
                               fontSize: 12,
@@ -327,9 +344,9 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                               height: 110,
                               child: ListView.builder(
                                   scrollDirection:Axis.horizontal,
-                                  itemCount: movie.peopleList.length,
+                                  itemCount: movie!.peopleList.length,
                                   itemBuilder: (context, index) {
-                                    People people = movie.peopleList[index];
+                                    People people = movie!.peopleList[index];
                                     return SizedBox(
                                       width: 80, // set this
                                       child: Column(children: [
@@ -398,7 +415,7 @@ class _DetailsMovieScreen extends State<DetailsMovieScreen>{
                         child: FutureBuilder(
                           future: MovieProvider.getMovies(
                               group: 'genre',
-                              groupKeyword: '${movie.genreList[0].name}',
+                              groupKeyword: '${movie!.genreList[0].name}',
                               countPerPage: '10',
                               pageIndex: '0',
                           ),
