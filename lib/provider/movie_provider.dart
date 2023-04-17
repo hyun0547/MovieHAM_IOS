@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:movieham_app/constants/constants_code.dart';
 
 import '../models/api_result_model.dart';
 
 class MovieProvider {
+  // static const String _baseUrl = 'https://movieapi.ssony.me';
   static const String _baseUrl = 'http://127.0.0.1:8080';
 
   static Future<List<Movie>?> getMovies(
@@ -94,5 +96,19 @@ class MovieProvider {
       return null;
     }
     return null;
+  }
+
+  static Future<bool> insertUser(User user) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/user/insert'),
+      headers:{"Content-Type": "application/json"},
+      body: json.encode({
+        'id': user.id,
+      })
+    );
+    if(response.statusCode == 200){
+      return true;
+    }
+    return false;
   }
 }
