@@ -79,7 +79,7 @@ class _AppState extends State<App> {
                         User? user = loginModel.user;
                         if(user != null){
                           MovieProvider.insertUser(user);
-                          storage.write(key: "id", value: jsonEncode(user));
+                          storage.write(key: "user", value: jsonEncode(user));
                         }
                         setState(() {});
                       },
